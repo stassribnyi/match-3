@@ -7,5 +7,27 @@
     width: 1em;
     height: 1em;
     position: absolute;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    cursor: pointer;
+
+    $tiles: (
+      candy: '🍬',
+      lollypop: '🍭',
+      chocolate: '🍫',
+      poop: '💩',
+      beacon: '🥩',
+      dice: '🎲',
+    );
+
+    @each $name, $tile in $tiles {
+      &.#{$name}:before {
+        content: $tile;
+        font-size: 0.7em;
+      }
+    }
   }
 }
