@@ -1,6 +1,14 @@
 import { Icon } from './icon';
+import { Model } from './model';
 import { Point } from './point';
 
-export class Tile {
-  constructor(public position: Point, public icon: Icon) {}
+interface ITile {
+  position: Point;
+  icon: Icon;
+}
+
+export class Tile extends Model<ITile> implements ITile {
+  constructor(public position: Point, public icon: Icon) {
+    super();
+  }
 }

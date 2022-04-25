@@ -99,7 +99,7 @@ export class Board {
     });
   }
 
-  canBeSwapped(tile1: Tile, tile2: Tile): boolean {
+  static canBeSwapped(tile1: Tile, tile2: Tile): boolean {
     if (tile1.icon === tile2.icon) {
       return false;
     }
@@ -113,5 +113,11 @@ export class Board {
     }
 
     return false;
+  }
+
+  static swapTiles(tile1: Tile, tile2: Tile) {
+    const position = tile1.position;
+    tile1.position = tile2.position;
+    tile2.position = position;
   }
 }
