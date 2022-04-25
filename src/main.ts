@@ -1,4 +1,9 @@
 import { Board } from './board';
+import { Tile } from './tile';
+
+type TileElement = HTMLDivElement & {
+  tile: Tile;
+};
 
 const SIZE = 8;
 
@@ -18,13 +23,14 @@ if (field) {
   field.style.width = `${SIZE}em`;
   field.style.height = `${SIZE}em`;
 
-  let currentTile: HTMLDivElement | null = null;
+  let currentTile: TileElement | null = null;
   const board = new Board();
   board.generate();
 
   const tileElements = board.tiles.map((tile) => {
-    const tileElement = document.createElement('div');
+    const tileElement = document.createElement('div') as TileElement;
 
+    tileElement.tile = tile;
     tileElement.classList.add('tile', tile.icon);
 
     tileElement.style.top = `${tile.position.y}em`;
@@ -40,7 +46,10 @@ if (field) {
 
       currentTile.classList.remove('active');
 
-      if (currentTile !== tileElement) {
+      if (
+        currentTile !== tileElement &&
+        board.canBeSwapped(currentTile.tile, tileElement.tile)
+      ) {
         swapTiles(currentTile, tileElement);
       }
 

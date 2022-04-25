@@ -90,12 +90,28 @@ export class Board {
 
   constructor(public size: number = 8) {}
 
-  generate() {
+  generate(): void {
     this.tiles = MOCK_FIELD.map((icon, idx) => {
       const row = Math.floor(idx / this.size);
       const col = idx - row * this.size;
 
       return new Tile(new Point(col, row), icon);
     });
+  }
+
+  canBeSwapped(tile1: Tile, tile2: Tile): boolean {
+    if (tile1.icon === tile2.icon) {
+      return false;
+    }
+
+    if (!tile1.icon || !tile2.icon) {
+      return false;
+    }
+
+    if (Point.areSiblings(tile1.position, tile2.position)) {
+      return true;
+    }
+
+    return false;
   }
 }
