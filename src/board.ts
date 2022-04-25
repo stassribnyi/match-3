@@ -99,7 +99,7 @@ export class Board {
     });
   }
 
-  static canBeSwapped(tile1: Tile, tile2: Tile): boolean {
+  static areSwappable(tile1: Tile, tile2: Tile): boolean {
     if (tile1.icon === tile2.icon) {
       return false;
     }

@@ -50,7 +50,7 @@ if (field) {
         return;
       }
 
-      if (Board.canBeSwapped(currentTile.tile, tileElement.tile)) {
+      if (Board.areSwappable(currentTile.tile, tileElement.tile)) {
         Board.swapTiles(currentTile.tile, tileElement.tile);
       }
 
