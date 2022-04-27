@@ -99,16 +99,71 @@ export class Board {
     });
   }
 
-  sort(): void {
-    this.tiles.sort((t1, t2) => this.findIndex(t1) - this.findIndex(t2));
-  }
-
   findIndex(tile: Tile): number {
     if (!tile) {
       return -1;
     }
 
     return tile.position.x * this.size + tile.position.y;
+  }
+
+  findVerticalLine(index: number): Array<Tile> {
+    return this.tiles.filter(({ position }) => position.x === index);
+  }
+
+  findHorizontalLine(index: number): Array<Tile> {
+    return this.tiles.filter(({ position }) => position.y === index);
+  }
+
+  swapTiles(t1: Tile, t2: Tile): void {
+    const idxT1 = this.tiles.indexOf(t1);
+    const idxT2 = this.tiles.indexOf(t2);
+
+    if (idxT1 < 0 || idxT2 < 0) {
+      return;
+    }
+
+    const position = t1.position;
+    t1.position = t2.position;
+    t2.position = position;
+
+    this.tiles[idxT1] = t2;
+    this.tiles[idxT2] = t1;
+  }
+
+  hasMatches() {
+    for (let i = 0; i < this.size; i++) {
+      const hasMatches =
+        [
+          ...Board.findClusters(this.findVerticalLine(i)),
+          ...Board.findClusters(this.findHorizontalLine(i)),
+        ].filter((tile) => tile.length >= 3).length > 0;
+
+      if (hasMatches) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Convert array to matrix, for debugging purposes
+   * @returns Matrix with icons
+   */
+  toMatrix(): Array<Array<Icon>> {
+    const matrix = [];
+
+    for (let y = 0; y < this.size; y++) {
+      const row = [];
+      for (let x = 0; x < this.size; x++) {
+        row.push(this.tiles[x + y * this.size].icon);
+      }
+
+      matrix.push(row);
+    }
+
+    return matrix;
   }
 
   static areSwappable(t1: Tile, t2: Tile): boolean {
@@ -153,11 +208,5 @@ export class Board {
     clusters.push(cluster);
 
     return clusters;
-  }
-
-  static swapTiles(t1: Tile, t2: Tile) {
-    const position = t1.position;
-    t1.position = t2.position;
-    t2.position = position;
   }
 }

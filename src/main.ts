@@ -51,17 +51,12 @@ if (field) {
       }
 
       if (Board.areSwappable(currentTile.tile, tileElement.tile)) {
-        Board.swapTiles(currentTile.tile, tileElement.tile);
-        board.sort();
+        board.swapTiles(currentTile.tile, tileElement.tile);
 
-        for (let index = 0; index < SIZE; index++) {
-          const line = board.tiles.filter((tile) => tile.position.y === index);
+        console.table(board.toMatrix());
 
-          const clustersToResolve = Board.findClusters(line).filter(
-            (cluster) => cluster.length >= 3 && cluster[0].icon
-          );
-
-          console.log(clustersToResolve);
+        if (board.hasMatches()) {
+          // TODO: resolve
         }
       }
 
