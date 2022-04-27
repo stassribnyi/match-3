@@ -99,25 +99,65 @@ export class Board {
     });
   }
 
-  static areSwappable(tile1: Tile, tile2: Tile): boolean {
-    if (tile1.icon === tile2.icon) {
+  sort(): void {
+    this.tiles.sort((t1, t2) => this.findIndex(t1) - this.findIndex(t2));
+  }
+
+  findIndex(tile: Tile): number {
+    if (!tile) {
+      return -1;
+    }
+
+    return tile.position.x * this.size + tile.position.y;
+  }
+
+  static areSwappable(t1: Tile, t2: Tile): boolean {
+    if (t1.icon === t2.icon) {
       return false;
     }
 
-    if (!tile1.icon || !tile2.icon) {
+    if (!t1.icon || !t2.icon) {
       return false;
     }
 
-    if (Point.areSiblings(tile1.position, tile2.position)) {
+    if (Point.areSiblings(t1.position, t2.position)) {
       return true;
     }
 
     return false;
   }
 
-  static swapTiles(tile1: Tile, tile2: Tile) {
-    const position = tile1.position;
-    tile1.position = tile2.position;
-    tile2.position = position;
+  static findClusters(tiles: Array<Tile>): Array<Array<Tile>> {
+    const clusters: Array<Array<Tile>> = [];
+    let cluster: Array<Tile> = [];
+
+    for (let i = 0; i < tiles.length; i++) {
+      const element = tiles[i];
+
+      if (!cluster.length) {
+        cluster.push(element);
+
+        continue;
+      }
+
+      if (cluster[0].icon === element.icon) {
+        cluster.push(element);
+
+        continue;
+      }
+
+      clusters.push(cluster);
+      cluster = [element];
+    }
+
+    clusters.push(cluster);
+
+    return clusters;
+  }
+
+  static swapTiles(t1: Tile, t2: Tile) {
+    const position = t1.position;
+    t1.position = t2.position;
+    t2.position = position;
   }
 }

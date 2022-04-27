@@ -52,6 +52,17 @@ if (field) {
 
       if (Board.areSwappable(currentTile.tile, tileElement.tile)) {
         Board.swapTiles(currentTile.tile, tileElement.tile);
+        board.sort();
+
+        for (let index = 0; index < SIZE; index++) {
+          const line = board.tiles.filter((tile) => tile.position.y === index);
+
+          const clustersToResolve = Board.findClusters(line).filter(
+            (cluster) => cluster.length >= 3 && cluster[0].icon
+          );
+
+          console.log(clustersToResolve);
+        }
       }
 
       currentTile = null;
