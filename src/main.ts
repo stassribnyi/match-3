@@ -26,12 +26,26 @@ if (field) {
     const tileElement = document.createElement('div') as TileElement;
 
     tileElement.tile = tile;
-    tileElement.classList.add('tile', tile.icon);
+    tileElement.classList.add('tile', tile.icon || '');
 
     setElementPosition(tileElement, tile.position);
 
     tile.subscribe('position', (position) => {
       setElementPosition(tileElement, position);
+    });
+
+    tile.subscribe('icon', (icon) => {
+      if(!tile.icon && !icon) {
+        return;
+      }
+
+      if (tile.icon) {
+        tileElement.classList.remove(tile.icon);
+      }
+
+      if (icon) {
+        tileElement.classList.add(icon);
+      }
     });
 
     tileElement.addEventListener('click', () => {
@@ -56,7 +70,7 @@ if (field) {
         console.table(board.toMatrix());
 
         if (board.hasMatches()) {
-          // TODO: resolve
+          board.resolveMatches();
         }
       }
 

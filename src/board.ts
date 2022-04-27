@@ -131,7 +131,19 @@ export class Board {
     this.tiles[idxT2] = t1;
   }
 
-  hasMatches() {
+  resolveMatches(): void {
+    for (let i = 0; i < this.size; i++) {
+      [
+        ...Board.findClusters(this.findVerticalLine(i)),
+        ...Board.findClusters(this.findHorizontalLine(i)),
+      ]
+        .filter((tile) => tile.length >= 3)
+        .flat()
+        .forEach((tile) => (tile.icon = null));
+    }
+  }
+
+  hasMatches(): boolean {
     for (let i = 0; i < this.size; i++) {
       const hasMatches =
         [
@@ -151,7 +163,7 @@ export class Board {
    * Convert array to matrix, for debugging purposes
    * @returns Matrix with icons
    */
-  toMatrix(): Array<Array<Icon>> {
+  toMatrix(): Array<Array<Tile['icon']>> {
     const matrix = [];
 
     for (let y = 0; y < this.size; y++) {
