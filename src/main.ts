@@ -14,6 +14,11 @@ function setElementPosition(element: TileElement, position: Tile['position']) {
   element.style.left = `${position.x}em`;
 }
 
+const delay = (timeout: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, timeout);
+  });
+
 if (field) {
   field.style.width = `${SIZE}em`;
   field.style.height = `${SIZE}em`;
@@ -48,7 +53,7 @@ if (field) {
       }
     });
 
-    tileElement.addEventListener('click', () => {
+    tileElement.addEventListener('click', async () => {
       if (!currentTile) {
         currentTile = tileElement;
         tileElement.classList.add('active');
@@ -72,6 +77,8 @@ if (field) {
         if (board.hasMatches()) {
           board.resolveMatches();
           board.shiftItems();
+          await delay(500);
+          board.fillUp();
         }
       }
 

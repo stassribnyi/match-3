@@ -99,14 +99,6 @@ export class Board {
     });
   }
 
-  findIndex(tile: Tile): number {
-    if (!tile) {
-      return -1;
-    }
-
-    return tile.position.x * this.size + tile.position.y;
-  }
-
   findVerticalLine(index: number): Array<Tile> {
     const line: Array<Tile> = [];
 
@@ -213,6 +205,39 @@ export class Board {
         }
       }
     }
+
+    // move all empty tiles out of boundaries
+    this.tiles.forEach((tile) => {
+      if (tile.icon) {
+        return;
+      }
+
+      tile.position = new Point(tile.position.x, tile.position.y - this.size);
+    });
+  }
+
+  fillUp() {
+    this.tiles.forEach((tile) => {
+      if (tile.icon) {
+        return;
+      }
+
+      tile.icon = Board.getIcon();
+      tile.position = new Point(tile.position.x, tile.position.y + this.size);
+    });
+  }
+
+  static getIcon() {
+    let possibleTypes = [
+      Icon.Beacon,
+      Icon.Candy,
+      Icon.Chocolate,
+      Icon.Dice,
+      Icon.Lollypop,
+      Icon.Poop,
+    ];
+
+    return possibleTypes[Math.floor(Math.random() * possibleTypes.length)];
   }
 
   static areSwappable(t1: Tile, t2: Tile): boolean {
