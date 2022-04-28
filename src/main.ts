@@ -74,10 +74,12 @@ if (field) {
 
         console.table(board.toMatrix());
 
+        await delay(250);
+
         if (board.hasMatches()) {
           board.resolveMatches();
           board.shiftItems();
-          await delay(500);
+          await delay(250);
           board.fillUp();
         }
       }
