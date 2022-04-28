@@ -35,7 +35,7 @@ if (field) {
     });
 
     tile.subscribe('icon', (icon) => {
-      if(!tile.icon && !icon) {
+      if (!tile.icon && !icon) {
         return;
       }
 
@@ -71,6 +71,7 @@ if (field) {
 
         if (board.hasMatches()) {
           board.resolveMatches();
+          board.shiftItems();
         }
       }
 

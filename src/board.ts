@@ -108,11 +108,25 @@ export class Board {
   }
 
   findVerticalLine(index: number): Array<Tile> {
-    return this.tiles.filter(({ position }) => position.x === index);
+    const line: Array<Tile> = [];
+
+    // using for loop helps to reduce unnecessary steps while searching required item
+    for (let x = 0; x < this.size; x++) {
+      line.push(this.tiles[x * this.size + index]);
+    }
+
+    return line;
   }
 
   findHorizontalLine(index: number): Array<Tile> {
-    return this.tiles.filter(({ position }) => position.y === index);
+    const line: Array<Tile> = [];
+
+    // using for loop helps to reduce unnecessary steps while searching required item
+    for (let x = 0; x < this.size; x++) {
+      line.push(this.tiles[index * this.size + x]);
+    }
+
+    return line;
   }
 
   swapTiles(t1: Tile, t2: Tile): void {
@@ -176,6 +190,29 @@ export class Board {
     }
 
     return matrix;
+  }
+
+  shiftItems() {
+    for (let x = 0; x < this.size; x++) {
+      const line = this.findVerticalLine(x);
+
+      for (let i = line.length - 1; i >= 0; i--) {
+        for (let j = i - 1; j >= 0; j--) {
+          const current = line[i];
+          const next = line[j];
+
+          if (!current.icon && !next.icon) {
+            continue;
+          }
+
+          if (!current.icon && next.icon) {
+            this.swapTiles(current, next);
+            line[i] = next;
+            line[j] = current;
+          }
+        }
+      }
+    }
   }
 
   static areSwappable(t1: Tile, t2: Tile): boolean {
