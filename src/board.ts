@@ -91,24 +91,27 @@ export class Board {
   constructor(public size: number = 8) {}
 
   generate(): void {
-    this.tiles = MOCK_FIELD.map((icon, idx) => {
-      const row = Math.floor(idx / this.size);
-      const col = idx - row * this.size;
+    this.tiles = [];
 
-      return new Tile(new Point(col, row), icon);
-    });
+    for (let x = 0; x < this.size; x++) {
+      for (let y = 0; y < this.size; y++) {
+        const position = new Point(x, y);
+
+        this.tiles.push(new Tile(position, this.getIcon(position)));
+      }
+    }
   }
 
   findByPosition(x: number, y: number): Tile | undefined {
     return this.tiles[x * this.size + y];
   }
 
-  findVerticalLine(index: number): Array<Tile> {
+  findVerticalLine(x: number): Array<Tile> {
     const line: Array<Tile> = [];
 
     // using for loop helps to reduce unnecessary steps while searching required item
-    for (let x = 0; x < this.size; x++) {
-      const tile = this.findByPosition(x, index);
+    for (let y = 0; y < this.size; y++) {
+      const tile = this.findByPosition(x, y);
       if (!tile) {
         continue;
       }
@@ -119,12 +122,12 @@ export class Board {
     return line;
   }
 
-  findHorizontalLine(index: number): Array<Tile> {
+  findHorizontalLine(y: number): Array<Tile> {
     const line: Array<Tile> = [];
 
     // using for loop helps to reduce unnecessary steps while searching required item
     for (let x = 0; x < this.size; x++) {
-      const tile = this.findByPosition(index, x);
+      const tile = this.findByPosition(x, y);
       if (!tile) {
         continue;
       }
