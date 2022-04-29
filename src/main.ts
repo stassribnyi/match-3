@@ -9,6 +9,8 @@ const swap = new Audio(swapUrl);
 
 // destroy.playbackRate = 1.5;
 // swap.playbackRate = 1.5;
+destroy.volume = 0.07;
+swap.volume = 0.07;
 
 type TileElement = HTMLDivElement & {
   tile: Tile;
