@@ -1,6 +1,15 @@
 import { Board } from './board';
 import { Tile } from './tile';
 
+import destroyUrl from 'url:../public/sounds/pop.m4a';
+import swapUrl from 'url:../public/sounds/swipe.m4a';
+
+const destroy = new Audio(destroyUrl);
+const swap = new Audio(swapUrl);
+
+// destroy.playbackRate = 1.5;
+// swap.playbackRate = 1.5;
+
 type TileElement = HTMLDivElement & {
   tile: Tile;
 };
@@ -24,9 +33,10 @@ if (field) {
   field.style.height = `${SIZE}em`;
 
   let currentTile: TileElement | null = null;
-  const board = new Board();
+  const board = new Board(SIZE);
   board.generate();
 
+  // expose board to window to perform debugging in browser
   (window as any).board = board;
 
   const tileElements = board.tiles.map((tile) => {
@@ -73,23 +83,26 @@ if (field) {
 
       if (Board.areSwappable(currentTile.tile, tileElement.tile)) {
         board.swapTiles(currentTile.tile, tileElement.tile);
+        await swap.play();
 
         console.table(board.toMatrix());
 
         if (board.hasMatches()) {
           do {
-            await delay(250);
+            await delay(400);
 
             board.resolveMatches();
             board.shiftItems();
 
-            await delay(250);
+            await destroy.play();
+            await delay(400);
 
             board.fillUp();
           } while (board.hasMatches());
         } else {
           // revert swap
-          await delay(250);
+          await delay(400);
+          await swap.play();
 
           board.swapTiles(currentTile.tile, tileElement.tile);
         }
