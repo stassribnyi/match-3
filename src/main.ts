@@ -27,6 +27,8 @@ if (field) {
   const board = new Board();
   board.generate();
 
+  (window as any).board = board;
+
   const tileElements = board.tiles.map((tile) => {
     const tileElement = document.createElement('div') as TileElement;
 
@@ -74,13 +76,22 @@ if (field) {
 
         console.table(board.toMatrix());
 
-        await delay(250);
-
         if (board.hasMatches()) {
-          board.resolveMatches();
-          board.shiftItems();
+          do {
+            await delay(250);
+
+            board.resolveMatches();
+            board.shiftItems();
+
+            await delay(250);
+
+            board.fillUp();
+          } while (board.hasMatches());
+        } else {
+          // revert swap
           await delay(250);
-          board.fillUp();
+
+          board.swapTiles(currentTile.tile, tileElement.tile);
         }
       }
 

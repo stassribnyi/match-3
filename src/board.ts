@@ -99,12 +99,21 @@ export class Board {
     });
   }
 
+  findByPosition(x: number, y: number): Tile | undefined {
+    return this.tiles[x * this.size + y];
+  }
+
   findVerticalLine(index: number): Array<Tile> {
     const line: Array<Tile> = [];
 
     // using for loop helps to reduce unnecessary steps while searching required item
     for (let x = 0; x < this.size; x++) {
-      line.push(this.tiles[x * this.size + index]);
+      const tile = this.findByPosition(x, index);
+      if (!tile) {
+        continue;
+      }
+
+      line.push(tile);
     }
 
     return line;
@@ -115,7 +124,12 @@ export class Board {
 
     // using for loop helps to reduce unnecessary steps while searching required item
     for (let x = 0; x < this.size; x++) {
-      line.push(this.tiles[index * this.size + x]);
+      const tile = this.findByPosition(index, x);
+      if (!tile) {
+        continue;
+      }
+
+      line.push(tile);
     }
 
     return line;
@@ -165,25 +179,6 @@ export class Board {
     return false;
   }
 
-  /**
-   * Convert array to matrix, for debugging purposes
-   * @returns Matrix with icons
-   */
-  toMatrix(): Array<Array<Tile['icon']>> {
-    const matrix = [];
-
-    for (let y = 0; y < this.size; y++) {
-      const row = [];
-      for (let x = 0; x < this.size; x++) {
-        row.push(this.tiles[x + y * this.size].icon);
-      }
-
-      matrix.push(row);
-    }
-
-    return matrix;
-  }
-
   shiftItems() {
     for (let x = 0; x < this.size; x++) {
       const line = this.findVerticalLine(x);
@@ -222,12 +217,14 @@ export class Board {
         return;
       }
 
-      tile.icon = Board.getIcon();
-      tile.position = new Point(tile.position.x, tile.position.y + this.size);
+      const position = new Point(tile.position.x, tile.position.y + this.size);
+
+      tile.position = position;
+      tile.icon = this.getIcon(position);
     });
   }
 
-  static getIcon() {
+  getIcon({ x, y }: Point): Icon {
     let possibleTypes = [
       Icon.Beacon,
       Icon.Candy,
@@ -236,6 +233,15 @@ export class Board {
       Icon.Lollypop,
       Icon.Poop,
     ];
+
+    // get top left and top elements in order to get icons we dont want to omit
+    // this approach helps to ensure absents of existing matches on generation step
+    const previousLeft = this.findByPosition(x, y - 1);
+    const previousTop = this.findByPosition(x - 1, y);
+
+    possibleTypes = possibleTypes.filter(
+      (icon) => ![previousTop?.icon, previousLeft?.icon].includes(icon)
+    );
 
     return possibleTypes[Math.floor(Math.random() * possibleTypes.length)];
   }
@@ -282,5 +288,24 @@ export class Board {
     clusters.push(cluster);
 
     return clusters;
+  }
+
+  /**
+   * Convert array to matrix, for debugging purposes
+   * @returns Matrix with icons
+   */
+  toMatrix(): Array<Array<Tile['icon'] | undefined>> {
+    const matrix = [];
+
+    for (let y = 0; y < this.size; y++) {
+      const row = [];
+      for (let x = 0; x < this.size; x++) {
+        row.push(this.findByPosition(x, y)?.icon);
+      }
+
+      matrix.push(row);
+    }
+
+    return matrix;
   }
 }
