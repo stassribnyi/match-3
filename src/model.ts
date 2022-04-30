@@ -23,7 +23,7 @@ export class Model<T extends object> {
     this.eventListeners.set(property, [callback]);
   }
 
-  private notify<K extends keyof T>(property: K, value: T[K]) {
+  protected notify<K extends keyof T>(property: K, value: T[K]) {
     this.eventListeners.get(property)?.forEach((callback) => callback(value));
   }
 }

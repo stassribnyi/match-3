@@ -1,6 +1,8 @@
 import { Board } from './board';
 import { Tile } from './tile';
 
+import { delay } from './utils/delay';
+
 import destroyUrl from 'url:../public/sounds/pop.m4a';
 import swapUrl from 'url:../public/sounds/swipe.m4a';
 
@@ -19,102 +21,114 @@ type TileElement = HTMLDivElement & {
 const SIZE = 8;
 
 const field = document.querySelector<HTMLDivElement>('.field');
+const score = document.getElementById('score');
 
 function setElementPosition(element: TileElement, position: Tile['position']) {
   element.style.top = `${position.y}em`;
   element.style.left = `${position.x}em`;
 }
 
-const delay = (timeout: number): Promise<void> =>
-  new Promise((resolve) => {
-    setTimeout(resolve, timeout);
-  });
-
 if (field) {
-  field.style.width = `${SIZE}em`;
-  field.style.height = `${SIZE}em`;
-
   let currentTile: TileElement | null = null;
   const board = new Board(SIZE);
-  board.generate();
 
   // expose board to window to perform debugging in browser
   (window as any).board = board;
 
-  const tileElements = board.tiles.map((tile) => {
-    const tileElement = document.createElement('div') as TileElement;
+  board.subscribe('tiles', (tiles) => {
+    if (!field) {
+      return;
+    }
 
-    tileElement.tile = tile;
-    tileElement.classList.add('tile', tile.icon || '');
+    field.style.width = `${board.size}em`;
+    field.style.height = `${board.size}em`;
 
-    setElementPosition(tileElement, tile.position);
+    const tileElements = tiles.map((tile) => {
+      const tileElement = document.createElement('div') as TileElement;
 
-    tile.subscribe('position', (position) => {
-      setElementPosition(tileElement, position);
-    });
+      tileElement.tile = tile;
+      tileElement.classList.add('tile', tile.icon || '');
 
-    tile.subscribe('icon', (icon) => {
-      if (!tile.icon && !icon) {
-        return;
-      }
+      setElementPosition(tileElement, tile.position);
 
-      if (tile.icon) {
-        tileElement.classList.remove(tile.icon);
-      }
+      tile.subscribe('position', (position) => {
+        setElementPosition(tileElement, position);
+      });
 
-      if (icon) {
-        tileElement.classList.add(icon);
-      }
-    });
+      tile.subscribe('icon', (icon) => {
+        if (!tile.icon && !icon) {
+          return;
+        }
 
-    tileElement.addEventListener('click', async () => {
-      if (!currentTile) {
-        currentTile = tileElement;
-        tileElement.classList.add('active');
+        if (tile.icon) {
+          tileElement.classList.remove(tile.icon);
+        }
 
-        return;
-      }
+        if (icon) {
+          tileElement.classList.add(icon);
+        }
+      });
 
-      currentTile.classList.remove('active');
+      tileElement.addEventListener('click', async () => {
+        if (!currentTile) {
+          currentTile = tileElement;
+          tileElement.classList.add('active');
 
-      if (currentTile === tileElement) {
-        currentTile = null;
+          return;
+        }
 
-        return;
-      }
+        currentTile.classList.remove('active');
 
-      if (Board.areSwappable(currentTile.tile, tileElement.tile)) {
-        board.swapTiles(currentTile.tile, tileElement.tile);
-        await swap.play();
+        if (currentTile === tileElement) {
+          currentTile = null;
 
-        console.table(board.toMatrix());
+          return;
+        }
 
-        if (board.hasMatches()) {
-          do {
-            await delay(400);
-
-            board.resolveMatches();
-            board.shiftItems();
-
-            await destroy.play();
-            await delay(400);
-
-            board.fillUp();
-          } while (board.hasMatches());
-        } else {
-          // revert swap
-          await delay(400);
+        if (Board.areSwappable(currentTile.tile, tileElement.tile)) {
+          board.swapTiles(currentTile.tile, tileElement.tile);
           await swap.play();
 
-          board.swapTiles(currentTile.tile, tileElement.tile);
-        }
-      }
+          console.table(board.toMatrix());
 
-      currentTile = null;
+          if (board.hasMatches()) {
+            do {
+              await delay(400);
+
+              board.resolveMatches();
+              board.shiftItems();
+              board.calculateScore();
+
+              await destroy.play();
+              await delay(400);
+
+              board.fillUp();
+            } while (board.hasMatches());
+          } else {
+            // revert swap
+            await delay(400);
+            await swap.play();
+
+            board.swapTiles(currentTile.tile, tileElement.tile);
+          }
+        }
+
+        currentTile = null;
+      });
+
+      return tileElement;
     });
 
-    return tileElement;
+    field.append(...tileElements);
   });
 
-  field?.append(...tileElements);
+  board.subscribe('score', (value) => {
+    if (!score) {
+      return;
+    }
+
+    score.innerText = `${value}`;
+  });
+
+  board.generate();
 }

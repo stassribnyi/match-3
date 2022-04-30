@@ -1,6 +1,7 @@
 import { Point } from './point';
 import { Icon } from './Icon';
 import { Tile } from './tile';
+import { Model } from './model';
 
 const MOCK_FIELD = [
   [
@@ -85,13 +86,22 @@ const MOCK_FIELD = [
   ],
 ].flat();
 
-export class Board {
+interface IBoard {
+  readonly size: number;
+  score: number;
+  tiles: Array<Tile>;
+}
+export class Board extends Model<IBoard> implements IBoard {
+  public score = 0;
   public tiles: Array<Tile> = [];
 
-  constructor(public size: number = 8) {}
+  constructor(public readonly size: number = 8) {
+    super();
+  }
 
   generate(): void {
     this.tiles = [];
+    this.score = 0;
 
     for (let x = 0; x < this.size; x++) {
       for (let y = 0; y < this.size; y++) {
@@ -100,6 +110,8 @@ export class Board {
         this.tiles.push(new Tile(position, this.getIcon(position)));
       }
     }
+
+    this.notify('tiles', this.tiles);
   }
 
   findByPosition(x: number, y: number): Tile | undefined {
@@ -211,6 +223,16 @@ export class Board {
       }
 
       tile.position = new Point(tile.position.x, tile.position.y - this.size);
+    });
+  }
+
+  calculateScore() {
+    this.tiles.forEach((tile) => {
+      if (tile.icon) {
+        return;
+      }
+
+      this.score += 100;
     });
   }
 
