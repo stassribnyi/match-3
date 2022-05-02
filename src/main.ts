@@ -2,18 +2,10 @@ import { Board } from './board';
 import { Tile } from './tile';
 import { Timer } from './timer';
 
-import { delay } from './utils';
+import { delay, loadAudio } from './utils';
 
-import destroyUrl from 'url:../public/sounds/pop.m4a';
-import swapUrl from 'url:../public/sounds/swipe.m4a';
-
-const destroy = new Audio(destroyUrl);
-const swap = new Audio(swapUrl);
-
-// destroy.playbackRate = 1.5;
-// swap.playbackRate = 1.5;
-destroy.volume = 0.07;
-swap.volume = 0.07;
+const destroy = loadAudio('pop', { volume: 0.07 });
+const swap = loadAudio('swipe', { volume: 0.07 });
 
 type TileElement = HTMLDivElement & {
   tile: Tile;
