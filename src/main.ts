@@ -1,7 +1,8 @@
 import { Board } from './board';
 import { Tile } from './tile';
+import { Timer } from './timer';
 
-import { delay } from './utils/delay';
+import { delay } from './utils';
 
 import destroyUrl from 'url:../public/sounds/pop.m4a';
 import swapUrl from 'url:../public/sounds/swipe.m4a';
@@ -20,115 +21,143 @@ type TileElement = HTMLDivElement & {
 
 const SIZE = 8;
 
-const field = document.querySelector<HTMLDivElement>('.field');
+const field = document.getElementById('field');
 const score = document.getElementById('score');
+const time = document.getElementById('time');
+const level = document.getElementById('level');
 
 function setElementPosition(element: TileElement, position: Tile['position']) {
   element.style.top = `${position.y}em`;
   element.style.left = `${position.x}em`;
 }
 
-if (field) {
-  let currentTile: TileElement | null = null;
-  const board = new Board(SIZE);
+const board = new Board(SIZE);
+const timer = new Timer(30);
 
-  // expose board to window to perform debugging in browser
-  (window as any).board = board;
+let currentTile: TileElement | null = null;
+const getTileClickHandler = (
+  tileElement: TileElement
+): (() => Promise<void>) => {
+  return async () => {
+    if (!currentTile) {
+      currentTile = tileElement;
+      tileElement.classList.add('active');
+      timer.start();
 
-  board.subscribe('tiles', (tiles) => {
-    if (!field) {
       return;
     }
 
-    field.style.width = `${board.size}em`;
-    field.style.height = `${board.size}em`;
+    currentTile.classList.remove('active');
 
-    const tileElements = tiles.map((tile) => {
-      const tileElement = document.createElement('div') as TileElement;
+    if (currentTile === tileElement) {
+      currentTile = null;
 
-      tileElement.tile = tile;
-      tileElement.classList.add('tile', tile.icon || '');
+      return;
+    }
 
-      setElementPosition(tileElement, tile.position);
+    // TODO: extract into separate function
+    if (Board.areSwappable(currentTile.tile, tileElement.tile)) {
+      board.swapTiles(currentTile.tile, tileElement.tile);
+      await swap.play();
 
-      tile.subscribe('position', (position) => {
-        setElementPosition(tileElement, position);
-      });
+      if (board.hasMatches()) {
+        do {
+          await delay(400);
 
-      tile.subscribe('icon', (icon) => {
-        if (!tile.icon && !icon) {
-          return;
-        }
+          board.resolveMatches();
+          board.shiftItems();
+          board.calculateScore();
+          timer.add(5);
 
-        if (tile.icon) {
-          tileElement.classList.remove(tile.icon);
-        }
+          await destroy.play();
+          await delay(400);
 
-        if (icon) {
-          tileElement.classList.add(icon);
-        }
-      });
+          board.fillUp();
+        } while (board.hasMatches());
+      } else {
+        // revert swap
+        await delay(400);
+        await swap.play();
 
-      tileElement.addEventListener('click', async () => {
-        if (!currentTile) {
-          currentTile = tileElement;
-          tileElement.classList.add('active');
+        board.swapTiles(currentTile.tile, tileElement.tile);
+      }
 
-          return;
-        }
+      timer.start();
 
-        currentTile.classList.remove('active');
+      console.table(board.toMatrix());
+    }
 
-        if (currentTile === tileElement) {
-          currentTile = null;
+    currentTile = null;
+  };
+};
 
-          return;
-        }
+board.subscribe('tiles', (tiles) => {
+  if (!field) {
+    return;
+  }
 
-        if (Board.areSwappable(currentTile.tile, tileElement.tile)) {
-          board.swapTiles(currentTile.tile, tileElement.tile);
-          await swap.play();
+  field.style.width = `${board.size}em`;
+  field.style.height = `${board.size}em`;
 
-          console.table(board.toMatrix());
+  const tileElements = tiles.map((tile) => {
+    const tileElement = document.createElement('div') as TileElement;
 
-          if (board.hasMatches()) {
-            do {
-              await delay(400);
+    tileElement.tile = tile;
+    tileElement.classList.add('tile', tile.icon || '');
 
-              board.resolveMatches();
-              board.shiftItems();
-              board.calculateScore();
+    setElementPosition(tileElement, tile.position);
 
-              await destroy.play();
-              await delay(400);
-
-              board.fillUp();
-            } while (board.hasMatches());
-          } else {
-            // revert swap
-            await delay(400);
-            await swap.play();
-
-            board.swapTiles(currentTile.tile, tileElement.tile);
-          }
-        }
-
-        currentTile = null;
-      });
-
-      return tileElement;
+    tile.subscribe('position', (position) => {
+      setElementPosition(tileElement, position);
     });
 
-    field.append(...tileElements);
+    tile.subscribe('icon', (icon) => {
+      if (!tile.icon && !icon) {
+        return;
+      }
+
+      if (tile.icon) {
+        tileElement.classList.remove(tile.icon);
+      }
+
+      if (icon) {
+        tileElement.classList.add(icon);
+      }
+    });
+
+    tileElement.addEventListener('click', getTileClickHandler(tileElement));
+
+    return tileElement;
   });
 
-  board.subscribe('score', (value) => {
-    if (!score) {
-      return;
-    }
+  field.replaceChildren(...tileElements);
+});
 
-    score.innerText = `${value}`;
-  });
+board.subscribe('score', (value) => {
+  if (!score) {
+    return;
+  }
 
-  board.generate();
-}
+  score.innerText = `${value}`;
+});
+
+timer.subscribe('time', (value) => {
+  if (!time) {
+    return;
+  }
+
+  if (value === 0) {
+    timer.reset();
+    board.generate();
+
+    return;
+  }
+
+  time.innerText = `${new Date(value * 1000).toISOString().substring(14, 19)}`;
+});
+
+board.generate();
+
+// expose board to window to perform debugging in browser
+(window as any).board = board;
+(window as any).timer = timer;
