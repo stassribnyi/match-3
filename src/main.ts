@@ -4,7 +4,7 @@ import { Timer } from './timer';
 
 import { delay, loadAudio } from './utils';
 
-const destroy = loadAudio('pop', { volume: 0.07 });
+const pop = loadAudio('pop', { volume: 0.07 });
 const swap = loadAudio('swipe', { volume: 0.07 });
 
 type TileElement = HTMLDivElement & {
@@ -16,7 +16,6 @@ const SIZE = 8;
 const field = document.getElementById('field');
 const score = document.getElementById('score');
 const time = document.getElementById('time');
-const level = document.getElementById('level');
 
 function setElementPosition(element: TileElement, position: Tile['position']) {
   element.style.top = `${position.y}em`;
@@ -24,7 +23,7 @@ function setElementPosition(element: TileElement, position: Tile['position']) {
 }
 
 const board = new Board(SIZE);
-const timer = new Timer(30);
+const timer = new Timer(15);
 
 let currentTile: TileElement | null = null;
 const getTileClickHandler = (
@@ -61,7 +60,7 @@ const getTileClickHandler = (
           board.calculateScore();
           timer.add(5);
 
-          await destroy.play();
+          await pop.play();
           await delay(400);
 
           board.fillUp();
@@ -138,14 +137,18 @@ timer.subscribe('time', (value) => {
     return;
   }
 
+  time.innerText = `${new Date(value * 1000).toISOString().substring(14, 19)}`;
+
   if (value === 0) {
-    timer.reset();
-    board.generate();
+    // wait before timer sets time value
+    // TODO: show game over
+    delay(1000).then(() => {
+      timer.reset();
+      board.generate();
+    });
 
     return;
   }
-
-  time.innerText = `${new Date(value * 1000).toISOString().substring(14, 19)}`;
 });
 
 board.generate();
