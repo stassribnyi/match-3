@@ -46,6 +46,8 @@ const getTileClickHandler = (
       return;
     }
 
+    let multiplier = 0;
+
     // TODO: extract into separate function
     if (Board.areSwappable(currentTile.tile, tileElement.tile)) {
       board.swapTiles(currentTile.tile, tileElement.tile);
@@ -53,11 +55,13 @@ const getTileClickHandler = (
 
       if (board.hasMatches()) {
         do {
+          multiplier++;
+
           await delay(400);
 
           board.resolveMatches();
           board.shiftItems();
-          board.calculateScore();
+          board.calculateScore(multiplier);
           timer.add(5);
 
           await pop.play();
@@ -75,7 +79,7 @@ const getTileClickHandler = (
 
       timer.start();
 
-      console.table(board.toMatrix());
+      // console.table(board.toMatrix());
     }
 
     currentTile = null;

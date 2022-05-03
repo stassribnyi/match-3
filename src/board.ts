@@ -226,13 +226,15 @@ export class Board extends Model<IBoard> implements IBoard {
     });
   }
 
-  calculateScore() {
+  calculateScore(multiplier: number) {
+    console.log(multiplier);
+
     this.tiles.forEach((tile) => {
       if (tile.icon) {
         return;
       }
 
-      this.score += 100;
+      this.score += 100 * multiplier;
     });
   }
 
