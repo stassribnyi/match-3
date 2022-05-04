@@ -7,11 +7,15 @@
   "source": "index.html",
   "scripts": {
     "start": "parcel --port 3500",
-    "build": "parcel build"
+    "build": "parcel build",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "@parcel/transformer-sass": "2.4.1",
+    "gh-pages": "^3.2.3",
     "parcel": "^2.4.1",
     "typescript": "^4.6.3"
-  }
+  },
+  "homepage": "https://stassribnyi.github.io/match-3"
 }
