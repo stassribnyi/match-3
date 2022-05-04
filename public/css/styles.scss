@@ -29,6 +29,32 @@ body {
   }
 }
 
+.field-container {
+  position: relative;
+
+  .multiplier {
+    position: absolute;
+    pointer-events: none;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 15rem;
+    opacity: 0;
+
+    color: #fcd53f;
+    text-shadow: -4px 4px 4px #3a3a3a;
+  }
+}
+
 .field {
   font-size: 60px;
   position: relative;

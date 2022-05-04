@@ -16,6 +16,20 @@ const SIZE = 8;
 const field = document.getElementById('field');
 const score = document.getElementById('score');
 const time = document.getElementById('time');
+const multiplierElement = document.getElementById('multiplier');
+
+const effect = new KeyframeEffect(
+  multiplierElement,
+  [{ opacity: 1 }, { transform: 'scale(1.5)' }, { opacity: 0 }],
+  {
+    duration: 500,
+    direction: 'normal',
+    easing: 'ease-in-out',
+    fill: 'forwards',
+  }
+);
+
+const animation = new Animation(effect, document.timeline);
 
 function setElementPosition(element: TileElement, position: Tile['position']) {
   element.style.top = `${position.y}em`;
@@ -65,6 +79,12 @@ const getTileClickHandler = (
           timer.add(5);
 
           await pop.play();
+
+          if (multiplierElement) {
+            multiplierElement.innerText = `${multiplier}X`;
+            animation.play();
+          }
+
           await delay(400);
 
           board.fillUp();
@@ -160,3 +180,4 @@ board.generate();
 // expose board to window to perform debugging in browser
 (window as any).board = board;
 (window as any).timer = timer;
+(window as any).animation = animation;
