@@ -2,10 +2,10 @@ import { Board } from './board';
 import { Tile } from './tile';
 import { Timer } from './timer';
 
-import { delay, loadAudio } from './utils';
+import { delay, loadAudio, playAudio } from './utils';
 
-const pop = loadAudio('pop', { volume: 0.07 });
-const swap = loadAudio('swipe', { volume: 0.07 });
+const pop = loadAudio('pop');
+const swap = loadAudio('swap');
 
 type TileElement = HTMLDivElement & {
   tile: Tile;
@@ -65,36 +65,33 @@ const getTileClickHandler = (
     // TODO: extract into separate function
     if (Board.areSwappable(currentTile.tile, tileElement.tile)) {
       board.swapTiles(currentTile.tile, tileElement.tile);
-      await swap.play();
+      await playAudio(swap);
 
       if (board.hasMatches()) {
         do {
           multiplier++;
-
-          await delay(400);
 
           board.resolveMatches();
           board.shiftItems();
           board.calculateScore(multiplier);
           timer.add(5);
 
-          await pop.play();
-
           if (multiplierElement) {
             multiplierElement.innerText = `${multiplier}X`;
             animation.play();
           }
 
-          await delay(400);
+          await playAudio(pop);
 
           board.fillUp();
+
+          await delay(400);
         } while (board.hasMatches());
       } else {
         // revert swap
-        await delay(400);
-        await swap.play();
 
         board.swapTiles(currentTile.tile, tileElement.tile);
+        await playAudio(swap);
       }
 
       timer.start();

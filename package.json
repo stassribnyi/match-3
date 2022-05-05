@@ -7,7 +7,7 @@
   "source": "index.html",
   "scripts": {
     "start": "parcel --port 3500",
-    "build": "parcel build",
+    "build": "parcel build --public-url /match-3",
     "predeploy": "yarn build",
     "deploy": "gh-pages -d dist"
   },

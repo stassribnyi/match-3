@@ -9,7 +9,7 @@ interface ITimer {
 }
 
 export class Timer extends Model<ITimer> implements ITimer {
-  private interval?: NodeJS.Timer | null;
+  private interval?: number | null;
 
   public time: number;
 
