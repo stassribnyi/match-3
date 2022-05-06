@@ -1,20 +1,33 @@
-type GameAudio = 'pop' | 'swap';
-type AudioOptions = Partial<Pick<HTMLAudioElement, 'playbackRate' | 'volume'>>;
+import { Howl } from 'howler';
+import { delay } from './delay';
 
-const GAME_AUDIO_URLS = new Map<GameAudio, URL>([
-  ['pop', new URL('../../public/sounds/pop.mp3', import.meta.url)],
-  ['swap', new URL('../../public/sounds/swap.mp3', import.meta.url)],
-]);
+type Sprites = 'pop' | 'swap';
+type HowlType = Omit<Howl, 'play'> & {
+  play: (spriteOrId?: Sprites | number) => Promise<number>;
+};
 
-export const loadAudio = (
-  name: GameAudio,
-  options: AudioOptions = {}
-): HTMLAudioElement => {
-  const audio = new Audio(GAME_AUDIO_URLS.get(name)?.toString());
+const FACTOR = 1500;
 
-  (Object.keys(options) as Array<keyof AudioOptions>).forEach((key) => {
-    audio[key] = options[key] || audio[key];
+export const loadAudio = (): HowlType => {
+  const sound = new Howl({
+    src: [
+      new URL('../../public/sounds/effects.mp3', import.meta.url).toString(),
+    ],
+    sprite: {
+      pop: [0, 108],
+      swap: [108, 386],
+    },
   });
 
-  return audio;
+  const playHandler = sound.play;
+
+  return Object.assign(sound, {
+    play: async (spriteOrId?: number | Sprites): Promise<number> => {
+      const id = playHandler.call(sound, spriteOrId);
+
+      await delay(sound.duration(id) * FACTOR);
+
+      return id;
+    },
+  });
 };

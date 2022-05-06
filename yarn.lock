@@ -364,6 +364,14 @@
     globals "^13.2.0"
     nullthrows "^1.1.1"
 
+"@parcel/packager-raw-url@2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@parcel/packager-raw-url/-/packager-raw-url-2.4.1.tgz#3c65987f4305e3b4ad7f3be3f6c3828b265d7ba9"
+  integrity sha512-TuMz23KPMSNNqiOB1grn5q2kxJj+yAUqtkWexNbDO6cFCuFSKvgTVOnoHBfAGzdt8C2NvSoKmj3Pkext3wS7Sw==
+  dependencies:
+    "@parcel/plugin" "2.4.1"
+    "@parcel/utils" "2.4.1"
+
 "@parcel/packager-raw@2.4.1":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@parcel/packager-raw/-/packager-raw-2.4.1.tgz#2566bd6187cf4e2393e5aad2b567d803248fdacb"
@@ -598,6 +606,16 @@
     posthtml-render "^3.0.0"
     semver "^5.7.1"
 
+"@parcel/transformer-webmanifest@2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@parcel/transformer-webmanifest/-/transformer-webmanifest-2.4.1.tgz#5d0afa4d15a5325f06dea0400c23a4d4a08e4bee"
+  integrity sha512-mmrS+xVEIMgt/j/IUM7BdiL1bUew656Yc8M8pXyjhs4Mc+AGlsF9LYrrBqiRptsNf3qDOvlqdaa+1V+iOZ9pzA==
+  dependencies:
+    "@parcel/diagnostic" "2.4.1"
+    "@parcel/plugin" "2.4.1"
+    "@parcel/utils" "2.4.1"
+    json-source-map "^0.6.1"
+
 "@parcel/types@2.4.1":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@parcel/types/-/types-2.4.1.tgz#4cd7b99db403ec36a1fe9f31a6320b2f6148f580"
@@ -653,6 +671,11 @@
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@trysound/sax/-/sax-0.2.0.tgz#cccaab758af56761eb7bf37af6f03f326dd798ad"
   integrity sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==
+
+"@types/howler@^2.2.7":
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/@types/howler/-/howler-2.2.7.tgz#5acfbed57f9e1d99b8dabe1b824729e1c1ea1fae"
+  integrity sha512-PEZldwZqJJw1PWRTpupyC7ajVTZA8aHd8nB/Y0n6zRZi5u8ktYDntsHj13ltEiBRqWwF06pASxBEvCTxniG8eA==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -1109,6 +1132,11 @@ has-flag@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-4.0.0.tgz#944771fd9c81c81265c4d6941860da06bb59479b"
   integrity sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==
+
+howler@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/howler/-/howler-2.2.3.tgz#a2eff9b08b586798e7a2ee17a602a90df28715da"
+  integrity sha512-QM0FFkw0LRX1PR8pNzJVAY25JhIWvbKMBFM4gqk+QdV+kPXOhleWGCB6AiAF/goGjIHK2e/nIElplvjQwhr0jg==
 
 htmlnano@^2.0.0:
   version "2.0.2"
