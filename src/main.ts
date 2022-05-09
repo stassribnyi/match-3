@@ -1,7 +1,6 @@
 import { Board } from './board';
-import { Tile } from './tile';
 import { Timer } from './timer';
-import { createTile, TileElement, TileElementHandlers } from './ui';
+import { createBoard, TileElement, TileElementHandlers } from './ui';
 
 import { delay, loadAudio } from './utils';
 
@@ -9,11 +8,12 @@ const audioSprite = loadAudio();
 
 const SIZE = 8;
 
-const field = document.getElementById('field');
+// const field = document.getElementById('field');
 const score = document.getElementById('score');
 const time = document.getElementById('time');
 const multiplierElement = document.getElementById('multiplier');
 const gameOverElement = document.getElementById('game-over');
+const fieldContainer = document.querySelector('.field-container');
 
 const multiplierAnimation = new Animation(
   new KeyframeEffect(
@@ -100,23 +100,13 @@ const handleTileClick: TileElementHandlers['onClick'] = async (event) => {
   currentTile = null;
 };
 
-board.subscribe('tiles', (tiles) => {
-  if (!field) {
-    return;
-  }
+const boardElement = createBoard(board, { onTileSelect: handleTileClick });
 
-  Array.from<TileElement>(field.children as any).forEach((tile) =>
-    tile.destroy()
-  );
-
-  field.replaceChildren(
-    ...tiles.map((tile) =>
-      createTile(tile, {
-        onClick: handleTileClick,
-      })
-    )
-  );
-});
+if (fieldContainer) {
+  console.log('test');
+  
+  fieldContainer.appendChild(boardElement);
+}
 
 board.subscribe('score', (value) => {
   if (!score) {

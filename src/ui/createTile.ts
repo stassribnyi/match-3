@@ -12,7 +12,10 @@ export type TileElementHandlers = Readonly<{
   onClick: (this: HTMLDivElement, ev: MouseEvent) => void;
 }>;
 
-export const createTile = (tile: Tile, { onClick }: TileElementHandlers) => {
+export const createTile = (
+  tile: Tile,
+  { onClick }: TileElementHandlers
+): TileElement => {
   const el = document.createElement('div') as TileElement;
 
   el.classList.add('tile');
