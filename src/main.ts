@@ -16,19 +16,21 @@ const field = document.getElementById('field');
 const score = document.getElementById('score');
 const time = document.getElementById('time');
 const multiplierElement = document.getElementById('multiplier');
+const gameOverElement = document.getElementById('game-over');
 
-const effect = new KeyframeEffect(
-  multiplierElement,
-  [{ opacity: 1 }, { transform: 'scale(1.5)' }, { opacity: 0 }],
-  {
-    duration: 500,
-    direction: 'normal',
-    easing: 'ease-in-out',
-    fill: 'forwards',
-  }
+const multiplierAnimation = new Animation(
+  new KeyframeEffect(
+    multiplierElement,
+    [{ opacity: 1 }, { transform: 'scale(1.5)' }, { opacity: 0 }],
+    {
+      duration: 500,
+      direction: 'normal',
+      easing: 'ease-in-out',
+      fill: 'forwards',
+    }
+  ),
+  document.timeline
 );
-
-const animation = new Animation(effect, document.timeline);
 
 function setElementPosition(element: TileElement, position: Tile['position']) {
   element.style.top = `${position.y}em`;
@@ -36,7 +38,7 @@ function setElementPosition(element: TileElement, position: Tile['position']) {
 }
 
 const board = new Board(SIZE);
-const timer = new Timer(15);
+const timer = new Timer(10);
 
 let currentTile: TileElement | null = null;
 const getTileClickHandler = (
@@ -77,7 +79,7 @@ const getTileClickHandler = (
 
           if (multiplierElement) {
             multiplierElement.innerText = `${multiplier}X`;
-            animation.play();
+            multiplierAnimation.play();
           }
 
           await audioSprite.play('pop');
@@ -161,14 +163,24 @@ timer.subscribe('time', (value) => {
 
   if (value === 0) {
     // wait before timer sets time value
-    // TODO: show game over
     delay(1000).then(() => {
       timer.reset();
-      board.generate();
+
+      if (gameOverElement) {
+        gameOverElement.style.opacity = '1';
+        gameOverElement.style.pointerEvents = 'all';
+      }
     });
 
     return;
   }
+});
+
+gameOverElement?.addEventListener('click', () => {
+  gameOverElement.style.pointerEvents = '';
+  gameOverElement.style.opacity = '';
+
+  board.generate();
 });
 
 board.generate();
@@ -176,4 +188,4 @@ board.generate();
 // expose board to window to perform debugging in browser
 (window as any).board = board;
 (window as any).timer = timer;
-(window as any).animation = animation;
+(window as any).animation = multiplierAnimation;

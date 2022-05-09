@@ -261,7 +261,7 @@ export class Board extends Model<IBoard> implements IBoard {
       Icon.Poop,
     ];
 
-    // get top left and top elements in order to get icons we dont want to omit
+    // get top left and top elements in order to get icons we want to omit
     // this approach helps to ensure absents of existing matches on generation step
     const previousLeft = this.findByPosition(x, y - 1);
     const previousTop = this.findByPosition(x - 1, y);

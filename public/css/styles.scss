@@ -40,7 +40,8 @@ body {
 .field-container {
   position: relative;
 
-  .multiplier {
+  .multiplier,
+  .game-over {
     position: absolute;
     pointer-events: none;
 
@@ -50,16 +51,29 @@ body {
     right: 0;
 
     margin: 0;
+    opacity: 0;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 15rem;
-    opacity: 0;
+    font-size: 4rem;
 
     color: #fcd53f;
     text-shadow: -4px 4px 4px #3a3a3a;
+  }
+
+  .game-over {
+    cursor: pointer;
+    background-color: #34312f82;
+    box-shadow: inset -4px 4px 18px #4a4a4a;
+    border-radius: 1rem;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  }
+
+  .multiplier {
+    font-size: 15rem;
   }
 }
 
@@ -71,6 +85,9 @@ body {
   box-shadow: inset -4px 4px 18px 0px #4a4a4a;
 
   .tile {
+    // make tile easier to select
+    outline: 8px solid #0000;
+
     border-color: #98dab0;
 
     width: 1em;
