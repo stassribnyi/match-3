@@ -3,89 +3,6 @@ import { Icon } from './Icon';
 import { Tile } from './tile';
 import { Model } from './model';
 
-const MOCK_FIELD = [
-  [
-    Icon.Beacon,
-    Icon.Dice,
-    Icon.Poop,
-    Icon.Dice,
-    Icon.Lollypop,
-    Icon.Beacon,
-    Icon.Chocolate,
-    Icon.Dice,
-  ],
-  [
-    Icon.Lollypop,
-    Icon.Chocolate,
-    Icon.Poop,
-    Icon.Dice,
-    Icon.Candy,
-    Icon.Candy,
-    Icon.Lollypop,
-    Icon.Candy,
-  ],
-  [
-    Icon.Chocolate,
-    Icon.Poop,
-    Icon.Beacon,
-    Icon.Beacon,
-    Icon.Dice,
-    Icon.Dice,
-    Icon.Beacon,
-    Icon.Lollypop,
-  ],
-  [
-    Icon.Dice,
-    Icon.Lollypop,
-    Icon.Chocolate,
-    Icon.Candy,
-    Icon.Chocolate,
-    Icon.Poop,
-    Icon.Candy,
-    Icon.Poop,
-  ],
-  [
-    Icon.Candy,
-    Icon.Dice,
-    Icon.Lollypop,
-    Icon.Chocolate,
-    Icon.Lollypop,
-    Icon.Beacon,
-    Icon.Dice,
-    Icon.Lollypop,
-  ],
-  [
-    Icon.Dice,
-    Icon.Candy,
-    Icon.Dice,
-    Icon.Beacon,
-    Icon.Dice,
-    Icon.Poop,
-    Icon.Candy,
-    Icon.Poop,
-  ],
-  [
-    Icon.Poop,
-    Icon.Beacon,
-    Icon.Poop,
-    Icon.Dice,
-    Icon.Chocolate,
-    Icon.Lollypop,
-    Icon.Dice,
-    Icon.Chocolate,
-  ],
-  [
-    Icon.Candy,
-    Icon.Chocolate,
-    Icon.Candy,
-    Icon.Lollypop,
-    Icon.Beacon,
-    Icon.Chocolate,
-    Icon.Beacon,
-    Icon.Lollypop,
-  ],
-].flat();
-
 interface IBoard {
   readonly size: number;
   score: number;
@@ -94,6 +11,7 @@ interface IBoard {
 export class Board extends Model<IBoard> implements IBoard {
   public score = 0;
   public tiles: Array<Tile> = [];
+  private currentMatches: Array<Array<Tile>> = [];
 
   constructor(public readonly size: number = 8) {
     super();
@@ -101,6 +19,7 @@ export class Board extends Model<IBoard> implements IBoard {
 
   generate(): void {
     this.tiles = [];
+    this.currentMatches = [];
     this.score = 0;
 
     for (let x = 0; x < this.size; x++) {
@@ -118,7 +37,7 @@ export class Board extends Model<IBoard> implements IBoard {
     return this.tiles[x * this.size + y];
   }
 
-  findVerticalLine(x: number): Array<Tile> {
+  findXLine(x: number): Array<Tile> {
     const line: Array<Tile> = [];
 
     // using for loop helps to reduce unnecessary steps while searching required item
@@ -134,7 +53,7 @@ export class Board extends Model<IBoard> implements IBoard {
     return line;
   }
 
-  findHorizontalLine(y: number): Array<Tile> {
+  findYLine(y: number): Array<Tile> {
     const line: Array<Tile> = [];
 
     // using for loop helps to reduce unnecessary steps while searching required item
@@ -167,36 +86,30 @@ export class Board extends Model<IBoard> implements IBoard {
   }
 
   resolveMatches(): void {
+    this.currentMatches.flat().forEach((tile) => (tile.icon = null));
+  }
+
+  findMatches() {
+    this.currentMatches = [];
+
+    const matchCondition = (tiles: Array<Tile>) => tiles.length >= 3;
+
     for (let i = 0; i < this.size; i++) {
-      [
-        ...Board.findClusters(this.findVerticalLine(i)),
-        ...Board.findClusters(this.findHorizontalLine(i)),
-      ]
-        .filter((tile) => tile.length >= 3)
-        .flat()
-        .forEach((tile) => (tile.icon = null));
+      this.currentMatches = [
+        ...this.currentMatches,
+        ...Board.findClusters(this.findXLine(i)).filter(matchCondition),
+        ...Board.findClusters(this.findYLine(i)).filter(matchCondition),
+      ];
     }
   }
 
   hasMatches(): boolean {
-    for (let i = 0; i < this.size; i++) {
-      const hasMatches =
-        [
-          ...Board.findClusters(this.findVerticalLine(i)),
-          ...Board.findClusters(this.findHorizontalLine(i)),
-        ].filter((tile) => tile.length >= 3).length > 0;
-
-      if (hasMatches) {
-        return true;
-      }
-    }
-
-    return false;
+    return this.currentMatches.length > 0;
   }
 
   shiftItems() {
     for (let x = 0; x < this.size; x++) {
-      const line = this.findVerticalLine(x);
+      const line = this.findXLine(x);
 
       for (let i = line.length - 1; i >= 0; i--) {
         for (let j = i - 1; j >= 0; j--) {
@@ -227,8 +140,6 @@ export class Board extends Model<IBoard> implements IBoard {
   }
 
   calculateScore(multiplier: number) {
-    console.log(multiplier);
-
     this.tiles.forEach((tile) => {
       if (tile.icon) {
         return;
@@ -252,7 +163,7 @@ export class Board extends Model<IBoard> implements IBoard {
   }
 
   getIcon({ x, y }: Point): Icon {
-    let possibleTypes = [
+    let possibleIcons = [
       Icon.Beacon,
       Icon.Candy,
       Icon.Chocolate,
@@ -266,11 +177,11 @@ export class Board extends Model<IBoard> implements IBoard {
     const previousLeft = this.findByPosition(x, y - 1);
     const previousTop = this.findByPosition(x - 1, y);
 
-    possibleTypes = possibleTypes.filter(
+    possibleIcons = possibleIcons.filter(
       (icon) => ![previousTop?.icon, previousLeft?.icon].includes(icon)
     );
 
-    return possibleTypes[Math.floor(Math.random() * possibleTypes.length)];
+    return possibleIcons[Math.floor(Math.random() * possibleIcons.length)];
   }
 
   static areSwappable(t1: Tile, t2: Tile): boolean {

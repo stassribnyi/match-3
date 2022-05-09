@@ -68,6 +68,8 @@ const getTileClickHandler = (
       board.swapTiles(currentTile.tile, tileElement.tile);
       await audioSprite.play('swap');
 
+      board.findMatches();
+
       if (board.hasMatches()) {
         do {
           multiplier++;
@@ -85,6 +87,7 @@ const getTileClickHandler = (
           await audioSprite.play('pop');
 
           board.fillUp();
+          board.findMatches();
 
           await delay(400);
         } while (board.hasMatches());
