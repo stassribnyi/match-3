@@ -1,5 +1,4 @@
-import { Board } from 'src/board';
-import { Tile } from 'src/tile';
+import { Board, Tile } from 'src/models';
 
 import { createTile, TileElement } from './createTile';
 

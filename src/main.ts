@@ -1,10 +1,9 @@
-import { Board } from './board';
-import { Tile } from './tile';
-import { Timer } from './timer';
+import { Board, Tile, Timer } from './models';
+
 import {
   createBoard,
   createGameOverOverlay,
-  createMultiplier,
+  createMultiplierOverlay,
   createScore,
   createTimer,
   TileElement,
@@ -18,24 +17,28 @@ const audioSprite = loadAudio();
 const board = new Board(8);
 const timer = new Timer(10);
 
-const fieldContainer = document.querySelector('.field-container');
+const container = document.getElementById('container');
 const statistics = document.getElementById('statistics');
 
-const multiplierElement = createMultiplier();
-const gameOverElement = createGameOverOverlay({
+const multiplierOverlay = createMultiplierOverlay();
+const gameOverOverlay = createGameOverOverlay({
   onClick: () => {
-    gameOverElement.hide();
+    gameOverOverlay.hide();
 
     board.generate();
   },
 });
 
+if (!container || !statistics) {
+  document.body.innerText = 'Invalid markup, please refresh the page!';
+
+  throw new Error('Invalid markup, please refresh the page!');
+}
+
 setCSSVar('--field-height', `${board.size}em`);
 setCSSVar('--field-width', `${board.size}em`);
 
 const performTurn = async (tile1: Tile, tile2: Tile) => {
-  let multiplier = 0;
-
   if (!Board.areSwappable(tile1, tile2)) {
     return;
   }
@@ -44,6 +47,8 @@ const performTurn = async (tile1: Tile, tile2: Tile) => {
   await audioSprite.play('swap');
 
   board.findMatches();
+
+  let multiplier = 0;
 
   if (board.hasMatches()) {
     do {
@@ -54,7 +59,7 @@ const performTurn = async (tile1: Tile, tile2: Tile) => {
       board.calculateScore(multiplier);
       timer.add(5);
 
-      multiplierElement.show(multiplier);
+      multiplierOverlay.show(multiplier);
 
       await audioSprite.play('pop');
 
@@ -69,7 +74,8 @@ const performTurn = async (tile1: Tile, tile2: Tile) => {
     await audioSprite.play('swap');
   }
 
-  // console.table(board.toMatrix());
+  // display board state inbetween turns
+  console.table(board.toMatrix());
 };
 
 let selectedTile: TileElement | null = null;
@@ -97,22 +103,16 @@ const handleTileClick: TileElementHandlers['onClick'] = async (event) => {
   selectedTile = null;
 };
 
-if (fieldContainer) {
-  fieldContainer.appendChild(
-    createBoard(board, { onTileSelect: handleTileClick })
-  );
+// create board elements
+container.appendChild(createBoard(board, { onTileSelect: handleTileClick }));
+container.appendChild(multiplierOverlay);
+container.appendChild(gameOverOverlay);
 
-  fieldContainer.appendChild(multiplierElement);
-  fieldContainer.appendChild(gameOverElement);
-}
-
-if (statistics) {
-  const ul = document.createElement('ul');
-  ul.appendChild(createScore(board));
-  ul.appendChild(createTimer(timer));
-
-  statistics.appendChild(ul);
-}
+// create statistics
+const ul = document.createElement('ul');
+ul.appendChild(createScore(board));
+ul.appendChild(createTimer(timer));
+statistics.appendChild(ul);
 
 timer.subscribe('time', (value) => {
   if (value !== 0) {
@@ -123,7 +123,7 @@ timer.subscribe('time', (value) => {
   delay(1000).then(() => {
     timer.reset();
 
-    gameOverElement.show();
+    gameOverOverlay.show();
   });
 });
 

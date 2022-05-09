@@ -1,4 +1,4 @@
-import { Timer } from 'src/timer';
+import { Timer } from 'src/models';
 
 export type TimerElement = HTMLLIElement &
   Readonly<{

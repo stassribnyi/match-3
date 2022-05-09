@@ -1,10 +1,10 @@
-export type MultiplierElement = HTMLParagraphElement &
+export type MultiplierOverlayElement = HTMLParagraphElement &
   Readonly<{
     show: (multiplier: number) => void;
   }>;
 
-export const createMultiplier = (): MultiplierElement => {
-  const el = document.createElement('p') as MultiplierElement;
+export const createMultiplierOverlay = (): MultiplierOverlayElement => {
+  const el = document.createElement('p') as MultiplierOverlayElement;
   el.classList.add('multiplier');
 
   const show = (multiplier: number) => {

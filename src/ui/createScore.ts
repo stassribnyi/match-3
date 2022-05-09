@@ -1,4 +1,4 @@
-import { Board } from 'src/board';
+import { Board } from 'src/models';
 
 export type ScoreElement = HTMLLIElement &
   Readonly<{
