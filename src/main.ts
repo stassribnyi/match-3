@@ -2,43 +2,35 @@ import { Board } from './board';
 import { Timer } from './timer';
 import {
   createBoard,
+  createGameOverOverlay,
+  createMultiplier,
   createScore,
   createTimer,
   TileElement,
   TileElementHandlers,
 } from './ui';
 
-import { delay, loadAudio } from './utils';
+import { delay, loadAudio, setCSSVar } from './utils';
 
 const audioSprite = loadAudio();
 
-const SIZE = 8;
+const board = new Board(8);
+const timer = new Timer(10);
 
 const fieldContainer = document.querySelector('.field-container');
 const statistics = document.getElementById('statistics');
 
-const multiplierElement = document.getElementById('multiplier');
-const gameOverElement = document.getElementById('game-over');
+const multiplierElement = createMultiplier();
+const gameOverElement = createGameOverOverlay({
+  onClick: () => {
+    gameOverElement.hide();
 
-const multiplierAnimation = new Animation(
-  new KeyframeEffect(
-    multiplierElement,
-    [{ opacity: 1 }, { transform: 'scale(1.5)' }, { opacity: 0 }],
-    {
-      duration: 500,
-      direction: 'normal',
-      easing: 'ease-in-out',
-      fill: 'forwards',
-    }
-  ),
-  document.timeline
-);
+    board.generate();
+  },
+});
 
-const board = new Board(SIZE);
-const timer = new Timer(10);
-
-document.documentElement.style.setProperty('--field-height', `${board.size}em`);
-document.documentElement.style.setProperty('--field-width', `${board.size}em`);
+setCSSVar('--field-height', `${board.size}em`);
+setCSSVar('--field-width', `${board.size}em`);
 
 let currentTile: TileElement | null = null;
 const handleTileClick: TileElementHandlers['onClick'] = async (event) => {
@@ -80,7 +72,7 @@ const handleTileClick: TileElementHandlers['onClick'] = async (event) => {
 
         if (multiplierElement) {
           multiplierElement.innerText = `${multiplier}X`;
-          multiplierAnimation.play();
+          multiplierElement.animation.play();
         }
 
         await audioSprite.play('pop');
@@ -109,6 +101,9 @@ if (fieldContainer) {
   fieldContainer.appendChild(
     createBoard(board, { onTileSelect: handleTileClick })
   );
+
+  fieldContainer.appendChild(multiplierElement);
+  fieldContainer.appendChild(gameOverElement);
 }
 
 if (statistics) {
@@ -128,18 +123,8 @@ timer.subscribe('time', (value) => {
   delay(1000).then(() => {
     timer.reset();
 
-    if (gameOverElement) {
-      gameOverElement.style.opacity = '1';
-      gameOverElement.style.pointerEvents = 'all';
-    }
+    gameOverElement.show();
   });
-});
-
-gameOverElement?.addEventListener('click', () => {
-  gameOverElement.style.pointerEvents = '';
-  gameOverElement.style.opacity = '';
-
-  board.generate();
 });
 
 board.generate();
@@ -147,4 +132,4 @@ board.generate();
 // expose board to window to perform debugging in browser
 (window as any).board = board;
 (window as any).timer = timer;
-(window as any).animation = multiplierAnimation;
+(window as any).animation = multiplierElement.animation;
