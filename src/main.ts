@@ -1,6 +1,12 @@
 import { Board } from './board';
 import { Timer } from './timer';
-import { createBoard, TileElement, TileElementHandlers } from './ui';
+import {
+  createBoard,
+  createScore,
+  createTimer,
+  TileElement,
+  TileElementHandlers,
+} from './ui';
 
 import { delay, loadAudio } from './utils';
 
@@ -8,12 +14,11 @@ const audioSprite = loadAudio();
 
 const SIZE = 8;
 
-// const field = document.getElementById('field');
-const score = document.getElementById('score');
-const time = document.getElementById('time');
+const fieldContainer = document.querySelector('.field-container');
+const statistics = document.getElementById('statistics');
+
 const multiplierElement = document.getElementById('multiplier');
 const gameOverElement = document.getElementById('game-over');
-const fieldContainer = document.querySelector('.field-container');
 
 const multiplierAnimation = new Animation(
   new KeyframeEffect(
@@ -100,42 +105,34 @@ const handleTileClick: TileElementHandlers['onClick'] = async (event) => {
   currentTile = null;
 };
 
-const boardElement = createBoard(board, { onTileSelect: handleTileClick });
-
 if (fieldContainer) {
-  console.log('test');
-  
-  fieldContainer.appendChild(boardElement);
+  fieldContainer.appendChild(
+    createBoard(board, { onTileSelect: handleTileClick })
+  );
 }
 
-board.subscribe('score', (value) => {
-  if (!score) {
-    return;
-  }
+if (statistics) {
+  const ul = document.createElement('ul');
+  ul.appendChild(createScore(board));
+  ul.appendChild(createTimer(timer));
 
-  score.innerText = `${value}`;
-});
+  statistics.appendChild(ul);
+}
 
 timer.subscribe('time', (value) => {
-  if (!time) {
+  if (value !== 0) {
     return;
   }
 
-  time.innerText = `${new Date(value * 1000).toISOString().substring(14, 19)}`;
+  // wait before timer sets time value
+  delay(1000).then(() => {
+    timer.reset();
 
-  if (value === 0) {
-    // wait before timer sets time value
-    delay(1000).then(() => {
-      timer.reset();
-
-      if (gameOverElement) {
-        gameOverElement.style.opacity = '1';
-        gameOverElement.style.pointerEvents = 'all';
-      }
-    });
-
-    return;
-  }
+    if (gameOverElement) {
+      gameOverElement.style.opacity = '1';
+      gameOverElement.style.pointerEvents = 'all';
+    }
+  });
 });
 
 gameOverElement?.addEventListener('click', () => {

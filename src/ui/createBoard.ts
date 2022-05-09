@@ -3,12 +3,10 @@ import { Tile } from 'src/tile';
 
 import { createTile, TileElement } from './createTile';
 
-export type BoardElement = Readonly<
-  HTMLDivElement & {
-    board: Board;
+export type BoardElement = HTMLDivElement &
+  Readonly<{
     destroy: () => void;
-  }
->;
+  }>;
 
 export type FieldElementHandlers = Readonly<{
   onTileSelect: (this: HTMLDivElement, ev: MouseEvent) => void;
@@ -17,7 +15,7 @@ export type FieldElementHandlers = Readonly<{
 export const createBoard = (
   board: Board,
   { onTileSelect }: FieldElementHandlers
-): BoardElement => {
+) => {
   const el = document.createElement('div') as BoardElement;
   el.classList.add('field');
 
@@ -41,7 +39,6 @@ export const createBoard = (
   board.subscribe('tiles', handleTilesChange);
 
   return Object.assign(el, {
-    board,
     destroy: () => {
       board.unsubscribe('tiles', handleTilesChange);
 

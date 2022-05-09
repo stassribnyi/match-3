@@ -1,12 +1,11 @@
 import { Tile } from 'src/tile';
 import { setElementPosition } from '../utils';
 
-export type TileElement = Readonly<
-  HTMLDivElement & {
+export type TileElement = HTMLDivElement &
+  Readonly<{
     tile: Tile;
     destroy: () => void;
-  }
->;
+  }>;
 
 export type TileElementHandlers = Readonly<{
   onClick: (this: HTMLDivElement, ev: MouseEvent) => void;
@@ -17,7 +16,6 @@ export const createTile = (
   { onClick }: TileElementHandlers
 ): TileElement => {
   const el = document.createElement('div') as TileElement;
-
   el.classList.add('tile');
 
   const handleIconChange = (icon: Tile['icon']): void => {
