@@ -77,6 +77,9 @@ body {
 }
 
 .field {
+  width: var(--field-width, 8em);
+  height: var(--field-height, 8em);
+
   font-size: min(calc((100vw - 2rem * 2) / 8), calc((100vh - 3rem * 2) / 8));
   position: relative;
   border-radius: 1rem;

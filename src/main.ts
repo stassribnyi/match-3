@@ -1,14 +1,11 @@
 import { Board } from './board';
 import { Tile } from './tile';
 import { Timer } from './timer';
+import { createTile, TileElement, TileElementHandlers } from './ui';
 
 import { delay, loadAudio } from './utils';
 
 const audioSprite = loadAudio();
-
-type TileElement = HTMLDivElement & {
-  tile: Tile;
-};
 
 const SIZE = 8;
 
@@ -32,79 +29,75 @@ const multiplierAnimation = new Animation(
   document.timeline
 );
 
-function setElementPosition(element: TileElement, position: Tile['position']) {
-  element.style.top = `${position.y}em`;
-  element.style.left = `${position.x}em`;
-}
-
 const board = new Board(SIZE);
 const timer = new Timer(10);
 
+document.documentElement.style.setProperty('--field-height', `${board.size}em`);
+document.documentElement.style.setProperty('--field-width', `${board.size}em`);
+
 let currentTile: TileElement | null = null;
-const getTileClickHandler = (
-  tileElement: TileElement
-): (() => Promise<void>) => {
-  return async () => {
-    if (!currentTile) {
-      currentTile = tileElement;
-      tileElement.classList.add('active');
-      timer.start();
+const handleTileClick: TileElementHandlers['onClick'] = async (event) => {
+  const tileElement = event.target as TileElement;
 
-      return;
-    }
+  if (!currentTile) {
+    currentTile = tileElement;
+    tileElement.classList.add('active');
+    timer.start();
 
-    currentTile.classList.remove('active');
+    return;
+  }
 
-    if (currentTile === tileElement) {
-      currentTile = null;
+  currentTile.classList.remove('active');
 
-      return;
-    }
+  if (currentTile === tileElement) {
+    currentTile = null;
 
-    let multiplier = 0;
+    return;
+  }
 
-    // TODO: extract into separate function
-    if (Board.areSwappable(currentTile.tile, tileElement.tile)) {
+  let multiplier = 0;
+
+  // TODO: extract into separate function
+  if (Board.areSwappable(currentTile.tile, tileElement.tile)) {
+    board.swapTiles(currentTile.tile, tileElement.tile);
+    await audioSprite.play('swap');
+
+    board.findMatches();
+
+    if (board.hasMatches()) {
+      do {
+        multiplier++;
+
+        board.resolveMatches();
+        board.shiftItems();
+        board.calculateScore(multiplier);
+        timer.add(5);
+
+        if (multiplierElement) {
+          multiplierElement.innerText = `${multiplier}X`;
+          multiplierAnimation.play();
+        }
+
+        await audioSprite.play('pop');
+
+        board.fillUp();
+        board.findMatches();
+
+        await delay(400);
+      } while (board.hasMatches());
+    } else {
+      // revert swap
+
       board.swapTiles(currentTile.tile, tileElement.tile);
       await audioSprite.play('swap');
-
-      board.findMatches();
-
-      if (board.hasMatches()) {
-        do {
-          multiplier++;
-
-          board.resolveMatches();
-          board.shiftItems();
-          board.calculateScore(multiplier);
-          timer.add(5);
-
-          if (multiplierElement) {
-            multiplierElement.innerText = `${multiplier}X`;
-            multiplierAnimation.play();
-          }
-
-          await audioSprite.play('pop');
-
-          board.fillUp();
-          board.findMatches();
-
-          await delay(400);
-        } while (board.hasMatches());
-      } else {
-        // revert swap
-
-        board.swapTiles(currentTile.tile, tileElement.tile);
-        await audioSprite.play('swap');
-      }
-
-      timer.start();
-
-      // console.table(board.toMatrix());
     }
 
-    currentTile = null;
-  };
+    timer.start();
+
+    // console.table(board.toMatrix());
+  }
+
+  currentTile = null;
 };
 
 board.subscribe('tiles', (tiles) => {
@@ -112,41 +105,17 @@ board.subscribe('tiles', (tiles) => {
     return;
   }
 
-  field.style.width = `${board.size}em`;
-  field.style.height = `${board.size}em`;
+  Array.from<TileElement>(field.children as any).forEach((tile) =>
+    tile.destroy()
+  );
 
-  const tileElements = tiles.map((tile) => {
-    const tileElement = document.createElement('div') as TileElement;
-
-    tileElement.tile = tile;
-    tileElement.classList.add('tile', tile.icon || '');
-
-    setElementPosition(tileElement, tile.position);
-
-    tile.subscribe('position', (position) => {
-      setElementPosition(tileElement, position);
-    });
-
-    tile.subscribe('icon', (icon) => {
-      if (!tile.icon && !icon) {
-        return;
-      }
-
-      if (tile.icon) {
-        tileElement.classList.remove(tile.icon);
-      }
-
-      if (icon) {
-        tileElement.classList.add(icon);
-      }
-    });
-
-    tileElement.addEventListener('click', getTileClickHandler(tileElement));
-
-    return tileElement;
-  });
-
-  field.replaceChildren(...tileElements);
+  field.replaceChildren(
+    ...tiles.map((tile) =>
+      createTile(tile, {
+        onClick: handleTileClick,
+      })
+    )
+  );
 });
 
 board.subscribe('score', (value) => {

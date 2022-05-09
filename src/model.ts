@@ -1,5 +1,5 @@
 export class Model<T extends object> {
-  private eventListeners = new Map<keyof T, [(value: any) => void]>();
+  private eventListeners = new Map<keyof T, Array<(value: any) => void>>();
 
   constructor() {
     const _this = this;
@@ -14,13 +14,18 @@ export class Model<T extends object> {
   }
 
   subscribe<K extends keyof T>(property: K, callback: (value: T[K]) => void) {
-    if (this.eventListeners.has(property)) {
-      this.eventListeners.get(property)?.push(callback);
+    const handlers = this.eventListeners.get(property) || [];
 
-      return;
-    }
+    this.eventListeners.set(property, [...handlers, callback]);
+  }
 
-    this.eventListeners.set(property, [callback]);
+  unsubscribe<K extends keyof T>(property: K, callback: (value: T[K]) => void) {
+    const handlers = this.eventListeners.get(property) || [];
+
+    this.eventListeners.set(
+      property,
+      handlers.filter((handler) => handler !== callback)
+    );
   }
 
   protected notify<K extends keyof T>(property: K, value: T[K]) {
