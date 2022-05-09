@@ -1,4 +1,5 @@
 import { Board } from './board';
+import { Tile } from './tile';
 import { Timer } from './timer';
 import {
   createBoard,
@@ -32,69 +33,68 @@ const gameOverElement = createGameOverOverlay({
 setCSSVar('--field-height', `${board.size}em`);
 setCSSVar('--field-width', `${board.size}em`);
 
-let currentTile: TileElement | null = null;
+const performTurn = async (tile1: Tile, tile2: Tile) => {
+  let multiplier = 0;
+
+  if (!Board.areSwappable(tile1, tile2)) {
+    return;
+  }
+
+  board.swapTiles(tile1, tile2);
+  await audioSprite.play('swap');
+
+  board.findMatches();
+
+  if (board.hasMatches()) {
+    do {
+      multiplier++;
+
+      board.resolveMatches();
+      board.shiftItems();
+      board.calculateScore(multiplier);
+      timer.add(5);
+
+      multiplierElement.show(multiplier);
+
+      await audioSprite.play('pop');
+
+      board.fillUp();
+      board.findMatches();
+
+      await delay(400);
+    } while (board.hasMatches());
+  } else {
+    // revert swap
+    board.swapTiles(tile1, tile2);
+    await audioSprite.play('swap');
+  }
+
+  // console.table(board.toMatrix());
+};
+
+let selectedTile: TileElement | null = null;
 const handleTileClick: TileElementHandlers['onClick'] = async (event) => {
   const tileElement = event.target as TileElement;
 
-  if (!currentTile) {
-    currentTile = tileElement;
+  if (!selectedTile) {
+    selectedTile = tileElement;
     tileElement.classList.add('active');
     timer.start();
 
     return;
   }
 
-  currentTile.classList.remove('active');
+  selectedTile.classList.remove('active');
 
-  if (currentTile === tileElement) {
-    currentTile = null;
+  if (selectedTile === tileElement) {
+    selectedTile = null;
 
     return;
   }
 
-  let multiplier = 0;
+  await performTurn(selectedTile.tile, tileElement.tile);
 
-  // TODO: extract into separate function
-  if (Board.areSwappable(currentTile.tile, tileElement.tile)) {
-    board.swapTiles(currentTile.tile, tileElement.tile);
-    await audioSprite.play('swap');
-
-    board.findMatches();
-
-    if (board.hasMatches()) {
-      do {
-        multiplier++;
-
-        board.resolveMatches();
-        board.shiftItems();
-        board.calculateScore(multiplier);
-        timer.add(5);
-
-        if (multiplierElement) {
-          multiplierElement.innerText = `${multiplier}X`;
-          multiplierElement.animation.play();
-        }
-
-        await audioSprite.play('pop');
-
-        board.fillUp();
-        board.findMatches();
-
-        await delay(400);
-      } while (board.hasMatches());
-    } else {
-      // revert swap
-
-      board.swapTiles(currentTile.tile, tileElement.tile);
-      await audioSprite.play('swap');
-    }
-
-    timer.start();
-
-    // console.table(board.toMatrix());
-  }
-
-  currentTile = null;
+  selectedTile = null;
 };
 
 if (fieldContainer) {
@@ -132,4 +132,3 @@ board.generate();
 // expose board to window to perform debugging in browser
 (window as any).board = board;
 (window as any).timer = timer;
-(window as any).animation = multiplierElement.animation;
