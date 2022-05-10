@@ -1,0 +1,37 @@
+.multiplier,
+.game-over {
+  z-index: 1;
+  position: absolute;
+  pointer-events: none;
+
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  margin: 0;
+  opacity: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--accent-color);
+  text-shadow: -4px 4px 4px #3a3a3a;
+}
+
+.multiplier {
+  font-size: 15rem;
+}
+
+.game-over {
+  cursor: pointer;
+  font-size: 4rem;
+
+  background-color: #34312f82;
+
+  border: 0.5rem double;
+  border-radius: 0.5rem;
+
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

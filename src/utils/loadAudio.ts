@@ -19,6 +19,8 @@ export const loadAudio = (): HowlType => {
     },
   });
 
+  sound.volume(0.5);
+
   const playHandler = sound.play;
 
   return Object.assign(sound, {

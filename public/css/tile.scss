@@ -1,0 +1,37 @@
+.tile {
+  cursor: pointer;
+
+  width: 1em;
+  height: 1em;
+  position: absolute;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-shadow: -2px 4px 8px #525252;
+
+  &.active {
+    outline: 5px ridge var(--accent-color);
+    z-index: 1;
+  }
+
+  &::before {
+    content: '';
+
+    width: 1em;
+    height: 1em;
+    background-size: cover;
+  }
+
+  $tiles: (crystal, mushroom, pumpkin, scull, stone, hat, flask);
+
+  @each $name in $tiles {
+    &.#{$name}:before {
+      background-image: url('../sprites/#{$name}.png');
+    }
+  }
+}

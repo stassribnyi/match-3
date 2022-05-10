@@ -7,16 +7,16 @@ export type BoardElement = HTMLDivElement &
     destroy: () => void;
   }>;
 
-export type FieldElementHandlers = Readonly<{
+export type BoardElementHandlers = Readonly<{
   onTileSelect: (this: HTMLDivElement, ev: MouseEvent) => void;
 }>;
 
 export const createBoard = (
   board: Board,
-  { onTileSelect }: FieldElementHandlers
+  { onTileSelect }: BoardElementHandlers
 ) => {
   const el = document.createElement('div') as BoardElement;
-  el.classList.add('field');
+  el.classList.add('board');
 
   const destroyChildren = () =>
     Array.from<TileElement>(el.children as any).forEach((tile) =>

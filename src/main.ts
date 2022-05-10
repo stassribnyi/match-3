@@ -35,8 +35,8 @@ if (!container || !statistics) {
   throw new Error('Invalid markup, please refresh the page!');
 }
 
-setCSSVar('--field-height', `${board.size}em`);
-setCSSVar('--field-width', `${board.size}em`);
+setCSSVar('--board-height', `${board.size}em`);
+setCSSVar('--board-width', `${board.size}em`);
 
 const performTurn = async (tile1: Tile, tile2: Tile) => {
   if (!Board.areSwappable(tile1, tile2)) {

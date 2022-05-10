@@ -164,12 +164,13 @@ export class Board extends Model<IBoard> implements IBoard {
 
   getIcon({ x, y }: Point): Icon {
     let possibleIcons = [
-      Icon.Beacon,
-      Icon.Candy,
-      Icon.Chocolate,
-      Icon.Dice,
-      Icon.Lollypop,
-      Icon.Poop,
+      Icon.Crystal,
+      Icon.Mushroom,
+      Icon.Pumpkin,
+      Icon.Scull,
+      Icon.Hat,
+      Icon.Stone,
+      Icon.Flask,
     ];
 
     // get top left and top elements in order to get icons we want to omit

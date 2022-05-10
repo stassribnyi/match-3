@@ -1,8 +1,9 @@
 export enum Icon {
-  Beacon = 'beacon',
-  Candy = 'candy',
-  Chocolate = 'chocolate',
-  Dice = 'dice',
-  Lollypop = 'lollypop',
-  Poop = 'poop',
+  Crystal = 'crystal',
+  Mushroom = 'mushroom',
+  Pumpkin = 'pumpkin',
+  Stone = 'stone',
+  Scull = 'scull',
+  Hat = 'hat',
+  Flask = 'flask',
 }

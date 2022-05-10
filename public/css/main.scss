@@ -1,0 +1,28 @@
+body {
+  font-family: 'Saira Semi Condensed', sans-serif;
+  font-weight: bold;
+
+  height: 100vh;
+
+  gap: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  flex-direction: column;
+
+  margin: 0;
+  box-sizing: border-box;
+
+  padding: {
+    left: 1rem;
+    right: 1rem;
+    top: max(3rem, env(safe-area-inset-top));
+    bottom: max(3rem, env(safe-area-inset-bottom));
+  }
+
+  background: url('../sprites/background.jpg') center / cover;
+}
+
+.container {
+  position: relative;
+}

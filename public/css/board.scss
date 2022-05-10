@@ -1,0 +1,13 @@
+.board {
+  width: var(--board-width, 8em);
+  height: var(--board-height, 8em);
+  font-size: var(--tile-size, 8em);
+
+  position: relative;
+
+  border: 0.5rem double #21201e85;
+  border-radius: 0.5rem;
+
+  background-color: rgb(47 79 79 / 60%);
+  box-shadow: inset -4px 4px 18px 0px #4a4a4a;
+}
