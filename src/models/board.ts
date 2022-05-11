@@ -3,11 +3,14 @@ import { Icon } from './Icon';
 import { Tile } from './tile';
 import { Model } from './model';
 
+const FROZEN_ICONS: Array<Icon | null> = [Icon.Stone];
+
 interface IBoard {
   readonly size: number;
   score: number;
   tiles: Array<Tile>;
 }
+
 export class Board extends Model<IBoard> implements IBoard {
   public score = 0;
   public tiles: Array<Tile> = [];
@@ -163,6 +166,13 @@ export class Board extends Model<IBoard> implements IBoard {
   }
 
   getIcon({ x, y }: Point): Icon {
+    const frozenTiles = this.tiles.filter((tile) =>
+      FROZEN_ICONS.includes(tile.icon)
+    );
+
+    // calculate ration of frozen tiles to all
+    const frozenRation = (frozenTiles.length / Math.pow(this.size, 2)) * 100;
+
     let possibleIcons = [
       Icon.Crystal,
       Icon.Mushroom,
@@ -172,6 +182,13 @@ export class Board extends Model<IBoard> implements IBoard {
       Icon.Stone,
       Icon.Flask,
     ];
+
+    // do not add any frozen item if its ration is higher then 5
+    if (frozenRation >= 5) {
+      possibleIcons = possibleIcons.filter(
+        (icon) => !FROZEN_ICONS.includes(icon)
+      );
+    }
 
     // get top left and top elements in order to get icons we want to omit
     // this approach helps to ensure absents of existing matches on generation step
@@ -185,7 +202,15 @@ export class Board extends Model<IBoard> implements IBoard {
     return possibleIcons[Math.floor(Math.random() * possibleIcons.length)];
   }
 
+  static canBeSelected(tile: Tile) {
+    return tile.icon && !FROZEN_ICONS.includes(tile.icon);
+  }
+
   static areSwappable(t1: Tile, t2: Tile): boolean {
+    if (!Board.canBeSelected(t1) || !Board.canBeSelected(t2)) {
+      return false;
+    }
+
     if (t1.icon === t2.icon) {
       return false;
     }

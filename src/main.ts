@@ -15,7 +15,7 @@ import { delay, loadAudio, setCSSVar } from './utils';
 const audioSprite = loadAudio();
 
 const board = new Board(8);
-const timer = new Timer(10);
+const timer = new Timer(30);
 
 const container = document.getElementById('container');
 const statistics = document.getElementById('statistics');
@@ -81,6 +81,10 @@ const performTurn = async (tile1: Tile, tile2: Tile) => {
 let selectedTile: TileElement | null = null;
 const handleTileClick: TileElementHandlers['onClick'] = async (event) => {
   const tileElement = event.target as TileElement;
+
+  if (!Board.canBeSelected(tileElement.tile)) {
+    return;
+  }
 
   if (!selectedTile) {
     selectedTile = tileElement;

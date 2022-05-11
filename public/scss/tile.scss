@@ -1,3 +1,5 @@
+$transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
 .tile {
   cursor: pointer;
 
@@ -11,7 +13,8 @@
 
   box-sizing: border-box;
 
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: left $transition, top $transition;
+
   text-shadow: -2px 4px 8px #525252;
 
   &.active {

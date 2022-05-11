@@ -20,6 +20,13 @@ export class Timer extends Model<ITimer> implements ITimer {
   }
 
   public add(seconds: number) {
+    // time could not be bigger than initial
+    if (this.time + seconds > this.seconds) {
+      this.reset();
+
+      return;
+    }
+
     this.time += seconds;
   }
 
