@@ -1,5 +1,5 @@
 import { Point } from './point';
-import { Icon } from './Icon';
+import { Icon } from './icon';
 import { Tile } from './tile';
 import { Model } from './model';
 
@@ -177,7 +177,7 @@ export class Board extends Model<IBoard> implements IBoard {
       Icon.Crystal,
       Icon.Mushroom,
       Icon.Pumpkin,
-      Icon.Scull,
+      Icon.Skull,
       Icon.Hat,
       Icon.Stone,
       Icon.Flask,

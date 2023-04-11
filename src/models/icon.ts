@@ -3,7 +3,7 @@ export enum Icon {
   Mushroom = 'mushroom',
   Pumpkin = 'pumpkin',
   Stone = 'stone',
-  Scull = 'scull',
+  Skull = 'skull',
   Hat = 'hat',
   Flask = 'flask',
 }

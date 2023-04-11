@@ -17,12 +17,13 @@ $transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   text-shadow: -2px 4px 8px #525252;
 
-  &.active {
-    outline: 5px ridge var(--accent-color);
-    z-index: 1;
-  }
+  // TODO: extract into separate var
+  // background: #475369;
+  // border: 1px solid #273346;
+  // border-radius: 4px;
 
-  &::before {
+  &::before,
+  &::after {
     content: '';
 
     width: 1em;
@@ -30,7 +31,17 @@ $transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background-size: cover;
   }
 
-  $tiles: (crystal, mushroom, pumpkin, scull, stone, hat, flask);
+  &::after {
+    transition: background-image $transition;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC");
+    position: absolute;
+  }
+
+  &.active::after {
+    background-image: url('../sprites/active.png');
+  }
+
+  $tiles: (crystal, mushroom, pumpkin, skull, stone, hat, flask);
 
   @each $name in $tiles {
     &.#{$name}:before {

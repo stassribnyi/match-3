@@ -20,10 +20,11 @@ body {
     bottom: max(3rem, env(safe-area-inset-bottom));
   }
 
-  background: url('../sprites/background.jpg') center / cover;
+  background: url('../sprites/background.png') center / cover;
 }
 
 .container {
   position: relative;
   overflow: hidden;
+  background-color: #475369;
 }

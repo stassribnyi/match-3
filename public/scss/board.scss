@@ -8,6 +8,23 @@
   border: 0.5rem double #21201e85;
   border-radius: 0.5rem;
 
-  background-color: rgb(47 79 79 / 60%);
-  box-shadow: inset -4px 4px 18px 0px #4a4a4a;
+  // box-shadow: inset -4px 4px 18px 0px #4a4a4a;
+
+  // this is grid generation
+
+  background-image: linear-gradient(
+      #273346 1.5px,
+      transparent 1.5px,
+      transparent calc(100% - 1.5px),
+      #273346 calc(100% - 1.5px)
+    ),
+    linear-gradient(
+      90deg,
+      #273346 1.5px,
+      transparent 1.5px,
+      transparent calc(100% - 1.5px),
+      #273346 calc(100% - 1.5px)
+    );
+  background-size: calc(100% / 8) calc(100% / 8) ;
+  border: 1.5px solid #273346;
 }
