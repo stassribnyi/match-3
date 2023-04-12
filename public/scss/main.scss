@@ -28,3 +28,8 @@ body {
   overflow: hidden;
   background-color: #475369;
 }
+
+.logo {
+  width: calc(var(--board-columns, 7) * 2em);
+  margin: 0 auto;
+}

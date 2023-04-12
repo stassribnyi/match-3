@@ -1,5 +1,5 @@
 .board {
-  height: calc(var(--board-rows, 7) * 1em);
+  height: calc(var(--board-rows, 8) * 1em);
   width: calc(var(--board-columns, 7) * 1em);
   font-size: var(--tile-size, 8em);
 
@@ -25,6 +25,6 @@
       transparent calc(100% - 1.5px),
       #273346 calc(100% - 1.5px)
     );
-  background-size: calc(100% / 8) calc(100% / 7) ;
+  background-size: calc(100% / var(--board-columns, 7)) calc(100% / var(--board-rows, 8)) ;
   border: 1.5px solid #273346;
 }
