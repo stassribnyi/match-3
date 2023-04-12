@@ -14,7 +14,7 @@ import { delay, loadAudio, setCSSVar } from './utils';
 
 const audioSprite = loadAudio();
 
-const board = new Board(8);
+const board = new Board(7, 8);
 const timer = new Timer(30);
 
 const container = document.getElementById('container');
@@ -35,8 +35,8 @@ if (!container || !statistics) {
   throw new Error('Invalid markup, please refresh the page!');
 }
 
-setCSSVar('--board-height', `${board.size}em`);
-setCSSVar('--board-width', `${board.size}em`);
+setCSSVar('--board-rows', `${board.height}`);
+setCSSVar('--board-columns', `${board.width}`);
 
 const performTurn = async (tile1: Tile, tile2: Tile) => {
   if (!Board.areSwappable(tile1, tile2)) {
@@ -132,6 +132,7 @@ timer.subscribe('time', (value) => {
 });
 
 board.generate();
+console.table(board.toMatrix());
 
 // expose board to window to perform debugging in browser
 (window as any).board = board;

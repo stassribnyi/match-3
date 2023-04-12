@@ -6,7 +6,8 @@ import { Model } from './model';
 const FROZEN_ICONS: Array<Icon | null> = [Icon.Stone];
 
 interface IBoard {
-  readonly size: number;
+  readonly height: number;
+  readonly width: number;
   score: number;
   tiles: Array<Tile>;
 }
@@ -16,7 +17,7 @@ export class Board extends Model<IBoard> implements IBoard {
   public tiles: Array<Tile> = [];
   private currentMatches: Array<Array<Tile>> = [];
 
-  constructor(public readonly size: number = 8) {
+  constructor(public readonly height: number = 7, public readonly width: number = 8) {
     super();
   }
 
@@ -25,8 +26,8 @@ export class Board extends Model<IBoard> implements IBoard {
     this.currentMatches = [];
     this.score = 0;
 
-    for (let x = 0; x < this.size; x++) {
-      for (let y = 0; y < this.size; y++) {
+    for (let x = 0; x < this.width; x++) {
+      for (let y = 0; y < this.height; y++) {
         const position = new Point(x, y);
 
         this.tiles.push(new Tile(position, this.getIcon(position)));
@@ -37,14 +38,14 @@ export class Board extends Model<IBoard> implements IBoard {
   }
 
   findByPosition(x: number, y: number): Tile | undefined {
-    return this.tiles[x * this.size + y];
+    return this.tiles[x * this.height + y];
   }
 
   findXLine(x: number): Array<Tile> {
     const line: Array<Tile> = [];
 
     // using for loop helps to reduce unnecessary steps while searching required item
-    for (let y = 0; y < this.size; y++) {
+    for (let y = 0; y < this.height; y++) {
       const tile = this.findByPosition(x, y);
       if (!tile) {
         continue;
@@ -60,7 +61,7 @@ export class Board extends Model<IBoard> implements IBoard {
     const line: Array<Tile> = [];
 
     // using for loop helps to reduce unnecessary steps while searching required item
-    for (let x = 0; x < this.size; x++) {
+    for (let x = 0; x < this.width; x++) {
       const tile = this.findByPosition(x, y);
       if (!tile) {
         continue;
@@ -97,7 +98,7 @@ export class Board extends Model<IBoard> implements IBoard {
 
     const matchCondition = (tiles: Array<Tile>) => tiles.length >= 3;
 
-    for (let i = 0; i < this.size; i++) {
+    for (let i = 0; i < this.width; i++) {
       this.currentMatches = [
         ...this.currentMatches,
         ...Board.findClusters(this.findXLine(i)).filter(matchCondition),
@@ -111,7 +112,7 @@ export class Board extends Model<IBoard> implements IBoard {
   }
 
   shiftItems() {
-    for (let x = 0; x < this.size; x++) {
+    for (let x = 0; x < this.width; x++) {
       const line = this.findXLine(x);
 
       for (let i = line.length - 1; i >= 0; i--) {
@@ -138,7 +139,7 @@ export class Board extends Model<IBoard> implements IBoard {
         return;
       }
 
-      tile.position = new Point(tile.position.x, tile.position.y - this.size);
+      tile.position = new Point(tile.position.x, tile.position.y - this.width);
     });
   }
 
@@ -158,7 +159,7 @@ export class Board extends Model<IBoard> implements IBoard {
         return;
       }
 
-      const position = new Point(tile.position.x, tile.position.y + this.size);
+      const position = new Point(tile.position.x, tile.position.y + this.width);
 
       tile.position = position;
       tile.icon = this.getIcon(position);
@@ -171,7 +172,7 @@ export class Board extends Model<IBoard> implements IBoard {
     );
 
     // calculate ration of frozen tiles to all
-    const frozenRation = (frozenTiles.length / Math.pow(this.size, 2)) * 100;
+    const frozenRation = (frozenTiles.length / Math.pow(this.width, 2)) * 100;
 
     let possibleIcons = [
       Icon.Crystal,
@@ -261,9 +262,9 @@ export class Board extends Model<IBoard> implements IBoard {
   toMatrix(): Array<Array<Tile['icon'] | undefined>> {
     const matrix = [];
 
-    for (let y = 0; y < this.size; y++) {
+    for (let y = 0; y < this.height; y++) {
       const row = [];
-      for (let x = 0; x < this.size; x++) {
+      for (let x = 0; x < this.width; x++) {
         row.push(this.findByPosition(x, y)?.icon);
       }
 
