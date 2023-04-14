@@ -109,6 +109,7 @@ const handleTileClick: TileElementHandlers['onClick'] = async (event) => {
 
 // create board elements
 container.appendChild(createBoard(board, { onTileSelect: handleTileClick }));
+// TODO: draw field
 container.appendChild(multiplierOverlay);
 container.appendChild(gameOverOverlay);
 
@@ -131,8 +132,30 @@ timer.subscribe('time', (value) => {
   });
 });
 
+// TODO: loader
+container.style.opacity = '0';
+ul.style.opacity = '0';
+
 board.generate();
 console.table(board.toMatrix());
+
+setTimeout(() => {
+  const loader = document.getElementById('splash');
+
+  if (!loader) {
+    return;
+  }
+
+  loader.style.opacity = '0';
+
+  container.style.opacity = "1";
+  ul.style.opacity = '1';
+
+  setTimeout(() => {
+    loader.style.display = 'none';
+
+  }, 1000);
+}, 4000);
 
 // expose board to window to perform debugging in browser
 (window as any).board = board;

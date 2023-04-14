@@ -1,5 +1,5 @@
 body {
-  font-family: 'Saira Semi Condensed', sans-serif;
+  font-family: 'Roboto Condensed', sans-serif;
   font-weight: bold;
 
   height: 100vh;
@@ -27,9 +27,86 @@ body {
   position: relative;
   overflow: hidden;
   background-color: #475369;
+
+  // TODO: combine with statistics
+  transition: opacity 1s ease-in-out;
 }
 
-.logo {
-  width: calc(var(--board-columns, 7) * 2em);
-  margin: 0 auto;
+.splash {
+  position: absolute;
+  font-size: 1.2rem;
+
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+
+  &::after {
+    content: '';
+    background: url('../sprites/sparks.png');
+    width: 100%;
+    height: 100%;
+    position: absolute;
+
+    opacity: 0.7;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .logo {
+    width: 75%;
+    margin: 0 auto;
+    filter: drop-shadow(2px 4px 8px rgba(200, 200, 200, 0.2));
+  }
+
+  p {
+    color: #b5b3b4;
+
+    font-size: 1.2rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+
+    margin-bottom: 0.5rem;
+  }
+}
+
+.loader {
+  height: 25px;
+  width: 552px;
+
+  display: flex;
+  align-items: center;
+
+  background: url('../sprites/loader-container.png');
+
+  .loader__bar {
+    height: 15px;
+    width: 400px;
+    margin-left: 4px;
+    position: relative;
+    overflow: hidden;
+    z-index: -1;
+
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+
+      width: 100%;
+      height: 100%;
+      margin-left: -100%;
+
+      animation: slide 5s infinite ease-in-out;
+      background: url('../sprites/loader-bar.png');
+    }
+  }
+}
+
+@keyframes slide {
+  100% {
+    margin-left: 0;
+  }
 }

@@ -26,5 +26,6 @@
       #273346 calc(100% - 1.5px)
     );
   background-size: calc(100% / var(--board-columns, 7)) calc(100% / var(--board-rows, 8)) ;
+  
   border: 1.5px solid #273346;
 }
