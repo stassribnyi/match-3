@@ -45,3 +45,20 @@ export const createBoard = (
     },
   });
 };
+
+// TODO: extract
+export const createGrid = (board: Board) => {
+  const el = document.createElement('div') as BoardElement;
+  el.classList.add('grid');
+
+  for (let x = 0; x < board.width; x++) {
+    const row = document.createElement('div');
+    for (let y = 0; y < board.height; y++) {
+      row.appendChild(document.createElement('div'));
+    }
+
+    el.appendChild(row);
+  }
+
+  return el;
+};

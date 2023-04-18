@@ -3,6 +3,7 @@ import { Board, Tile, Timer } from './models';
 import {
   createBoard,
   createGameOverOverlay,
+  createGrid,
   createMultiplierOverlay,
   createScore,
   createTimer,
@@ -109,6 +110,8 @@ const handleTileClick: TileElementHandlers['onClick'] = async (event) => {
 
 // create board elements
 container.appendChild(createBoard(board, { onTileSelect: handleTileClick }));
+container.appendChild(createGrid(board))
+
 // TODO: draw field
 container.appendChild(multiplierOverlay);
 container.appendChild(gameOverOverlay);

@@ -30,6 +30,14 @@ body {
 
   // TODO: combine with statistics
   transition: opacity 1s ease-in-out;
+
+  // TODO: refactor
+  box-shadow: 1px 1px 3px 0px #050505;
+  border: 1.5px solid #6f83a1ab;
+  border-radius: 1.5rem;
+  padding: 0.5rem;
+
+  filter: opacity(0.75) brightness(1.1) saturate(1.1) contrast(1.1);
 }
 
 .splash {
@@ -108,5 +116,56 @@ body {
 @keyframes slide {
   100% {
     margin-left: 0;
+  }
+}
+
+// TODO: cleanup
+.board {
+  z-index: 1;
+}
+
+.grid {
+  background-color: #273346;
+  border-radius: 1rem;
+  z-index: 0;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0.5rem;
+  height: calc(var(--board-rows, 8) * 1em);
+  width: calc(var(--board-columns, 7) * 1em);
+  font-size: var(--tile-size, 8em);
+
+  div > div {
+    width: 1em;
+    height: 1em;
+    background: #475369;
+
+    box-sizing: border-box;
+    border: 1px solid #273346;
+    border-radius: 0.5rem;
+
+    &:first-child {
+      border-top: none;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  div {
+    &:first-child {
+      div {
+        border-left: none;
+      }
+    }
+
+    &:last-child {
+      div {
+        border-right: none;
+      }
+    }
   }
 }
