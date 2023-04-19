@@ -10,7 +10,7 @@ export const createMultiplierOverlay = (): MultiplierOverlayElement => {
   const show = (multiplier: number) => {
     el.innerText = `${multiplier}X`;
     el.animate([{ opacity: 1 }, { transform: 'scale(1.5)' }, { opacity: 0 }], {
-      duration: 500,
+      duration: 25003,
       direction: 'normal',
       easing: 'ease-in-out',
       fill: 'forwards',

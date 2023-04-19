@@ -58,6 +58,11 @@ const performTurn = async (tile1: Tile, tile2: Tile) => {
       board.resolveMatches();
       board.shiftItems();
       board.calculateScore(multiplier);
+      
+  if (board.score > 1000) {
+    board.level += 1;
+    board.score = 0;
+  }
       timer.add(5);
 
       multiplierOverlay.show(multiplier);
@@ -74,6 +79,7 @@ const performTurn = async (tile1: Tile, tile2: Tile) => {
     board.swapTiles(tile1, tile2);
     await audioSprite.play('swap');
   }
+
 
   // display board state inbetween turns
   console.table(board.toMatrix());
@@ -110,7 +116,7 @@ const handleTileClick: TileElementHandlers['onClick'] = async (event) => {
 
 // create board elements
 container.appendChild(createBoard(board, { onTileSelect: handleTileClick }));
-container.appendChild(createGrid(board))
+container.appendChild(createGrid(board.width, board.height));
 
 // TODO: draw field
 container.appendChild(multiplierOverlay);
@@ -151,15 +157,33 @@ setTimeout(() => {
 
   loader.style.opacity = '0';
 
-  container.style.opacity = "1";
+  container.style.opacity = '1';
   ul.style.opacity = '1';
 
   setTimeout(() => {
     loader.style.display = 'none';
-
   }, 1000);
 }, 4000);
 
 // expose board to window to perform debugging in browser
 (window as any).board = board;
 (window as any).timer = timer;
+
+// TODO:
+// - level
+// - score
+// - timer
+// - get some currency for extra figures
+// - refresh withdraw with scores
+// - extra figures tracking:
+// - square
+// - cross
+
+// Ideas:
+// Game should have level based progression,
+// each level should have time limit
+// time limit should depend on level
+// each level should have different goals, for simplicity we can use score target
+// score target should depend on level
+// there should be some goals based on tiles combinations
+// there should be hint with possible combinations and scores

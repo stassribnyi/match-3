@@ -1,0 +1,44 @@
+.grid {
+  z-index: 0;
+  display: flex;
+  position: absolute;
+
+  border-radius: 1rem;
+  top: var(--container-padding, 0.5rem);
+  height: calc(100% - var(--container-padding, 0.5rem) * 2);
+  width: calc(100% - var(--container-padding, 0.5rem) * 2);
+
+  font-size: var(--tile-size, 8em);
+
+  background-color: var(--grid-color, #273346);
+
+  .row {
+    .cell {
+      width: 1em;
+      height: 1em;
+      box-sizing: border-box;
+
+      background-color: var(--container-color, #475369);
+
+      border: {
+        radius: 0.5rem;
+        left: 2px solid var(--grid-color, #273346);
+        bottom: 2px solid var(--grid-color, #273346);
+      }
+
+      &:first-child {
+        border-top: none;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    &:first-child {
+      .cell {
+        border-left: none;
+      }
+    }
+  }
+}

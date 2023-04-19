@@ -17,11 +17,6 @@ $transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   text-shadow: -2px 4px 8px #525252;
 
-  // TODO: extract into separate var
-  // background: #475369;
-  // border: 1px solid #273346;
-  // border-radius: 4px;
-
   &::before,
   &::after {
     content: '';
@@ -32,9 +27,11 @@ $transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   &::after {
-    transition: background-image $transition;
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC");
     position: absolute;
+    transition: background-image $transition;
+
+    // Just a blank image to give transition some baseline
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC");
   }
 
   &.active::after {
