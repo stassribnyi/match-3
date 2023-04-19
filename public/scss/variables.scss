@@ -3,7 +3,7 @@
   --board-columns: 8;
 
   --tile-size: min(
-    calc((100vw - 2rem * 2) / var(--board-rows, 7)),
+    calc((100vw - 3rem * 2) / var(--board-rows, 7)),
     calc((100vh - 6rem * 2) / var(--board-columns, 8))
   );
 
