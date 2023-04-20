@@ -9,7 +9,7 @@ export const createScore = (board: Board): ScoreElement => {
   const el = document.createElement('li') as ScoreElement;
 
   const handleScoreChange = (score: number) => {
-    el.innerText = `Score: ${score}`;
+    el.innerText = `Current Score:\n${score} pt`;
   };
 
   board.subscribe('score', handleScoreChange);

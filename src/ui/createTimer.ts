@@ -6,7 +6,7 @@ export type TimerElement = HTMLLIElement &
   }>;
 
 const secondsToTimeLeft = (time: number): string =>
-  `Time left: ${new Date(time * 1000).toISOString().substring(14, 19)}`;
+  `Level Time:\n${new Date(time * 1000).toISOString().substring(14, 19)}`;
 
 export const createTimer = (timer: Timer): TimerElement => {
   const el = document.createElement('li') as TimerElement;

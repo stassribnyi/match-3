@@ -1,5 +1,6 @@
 .multiplier,
-.game-over {
+.game-over,
+.level-up {
   z-index: 1;
   position: absolute;
   pointer-events: none;
@@ -20,7 +21,8 @@
   text-shadow: -4px 4px 4px #3a3a3a;
 }
 
-.multiplier {
+.multiplier,
+.level-up {
   font-size: 15rem;
 }
 

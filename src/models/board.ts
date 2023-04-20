@@ -9,11 +9,16 @@ interface IBoard {
   readonly height: number;
   readonly width: number;
   score: number;
+  targetScore: number;
+  level: number;
   tiles: Array<Tile>;
 }
 
 export class Board extends Model<IBoard> implements IBoard {
   public score = 0;
+  public level = 1;
+  public targetScore: number = 1000;
+
   public tiles: Array<Tile> = [];
   private currentMatches: Array<Array<Tile>> = [];
 
@@ -25,6 +30,7 @@ export class Board extends Model<IBoard> implements IBoard {
     this.tiles = [];
     this.currentMatches = [];
     this.score = 0;
+    this.level = 1;
 
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
@@ -151,6 +157,10 @@ export class Board extends Model<IBoard> implements IBoard {
 
       this.score += 100 * multiplier;
     });
+  }
+
+  calculateTargetScore(level: number) {
+    this.targetScore = level * 1500;
   }
 
   fillUp() {

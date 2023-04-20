@@ -4,8 +4,11 @@ import {
   createBoard,
   createGameOverOverlay,
   createGrid,
+  createLevel,
+  createLevelUpOverlay,
   createMultiplierOverlay,
   createScore,
+  createTargetScore,
   createTimer,
   TileElement,
   TileElementHandlers,
@@ -41,13 +44,14 @@ function main() {
   const container = document.createElement('div');
   const statistics = document.createElement('div');
 
-  container.classList.add("container");
-  statistics.classList.add("statistics");
+  container.classList.add('container');
+  statistics.classList.add('statistics');
 
   document.body.appendChild(statistics);
   document.body.appendChild(container);
 
   const multiplierOverlay = createMultiplierOverlay();
+  const levelUpOverlay = createLevelUpOverlay();
   const gameOverOverlay = createGameOverOverlay({
     onClick: () => {
       gameOverOverlay.hide();
@@ -79,15 +83,18 @@ function main() {
         board.shiftItems();
         board.calculateScore(multiplier);
 
-        if (board.score > 1000) {
+        if (board.score >= board.targetScore) {
           board.level += 1;
           board.score = 0;
+          timer.reset();
+          timer.start();
+          levelUpOverlay.show();
+          // TODO: play level up sound
+        } else {
+          timer.add(5);
+          multiplierOverlay.show(multiplier);
+          await audioSprite.play('pop');
         }
-        timer.add(5);
-
-        multiplierOverlay.show(multiplier);
-
-        await audioSprite.play('pop');
 
         board.fillUp();
         board.findMatches();
@@ -139,11 +146,15 @@ function main() {
 
   // TODO: draw field
   container.appendChild(multiplierOverlay);
+  container.appendChild(levelUpOverlay);
   container.appendChild(gameOverOverlay);
 
+  // TODO: reuse statistic item creation logic
   // create statistics
   const ul = document.createElement('ul');
   ul.appendChild(createScore(board));
+  ul.appendChild(createTargetScore(board));
+  ul.appendChild(createLevel(board));
   ul.appendChild(createTimer(timer));
   statistics.appendChild(ul);
 
@@ -164,6 +175,9 @@ function main() {
   // container.style.opacity = '0';
   // ul.style.opacity = '0';
 
+  board.subscribe('level', (level) => {
+    board.calculateTargetScore(level);
+  });
   board.generate();
   console.table(board.toMatrix());
 
@@ -189,4 +203,4 @@ setTimeout(() => {
   setTimeout(() => {
     loader.style.display = 'none';
   }, 1000);
-}, 4000);
+}, 400);
