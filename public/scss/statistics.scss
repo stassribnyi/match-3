@@ -33,6 +33,44 @@
 
     & > li {
       text-align: center;
+
+      & > button {
+        border: none;
+        background: none;
+        color: var(--accent-color);
+      }
+    }
+  }
+
+  // TODO: refactor, reuse statistics, but split them up and use different namings
+  &.right {
+    min-width: 8rem;
+    width: auto;
+    top: 50%;
+    right: 0;
+    border: {
+      top: {
+        left: {
+          radius: 1rem;
+        }
+      }
+      bottom: {
+        left: {
+          radius: 1rem;
+        }
+        right: {
+          radius: 0;
+        }
+      }
+    }
+
+    & > ul {
+      gap: 1rem;
+      align-items: flex-start;
+      flex-direction: column;
+      & > li {
+        cursor: pointer;
+      }
     }
   }
 }

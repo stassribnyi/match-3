@@ -8,8 +8,8 @@ export type LevelElement = HTMLLIElement &
 export const createLevel = (board: Board): LevelElement => {
   const el = document.createElement('li') as LevelElement;
 
-  const handleLevelChange = (Level: number) => {
-    el.innerText = `Level:\n${Level}`;
+  const handleLevelChange = (level: number) => {
+    el.innerText = `Level:\n${level}`;
   };
 
   board.subscribe('level', handleLevelChange);

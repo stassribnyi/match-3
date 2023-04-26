@@ -13,6 +13,7 @@ import {
   TileElement,
   TileElementHandlers,
 } from './ui';
+import { createMenu } from './ui/createMenu';
 
 import { delay, loadAudio, setCSSVar } from './utils';
 
@@ -43,8 +44,7 @@ function main() {
 
   const container = document.createElement('div');
   const statistics = document.createElement('div');
-
-  container.classList.add('container');
+ container.classList.add('container');
   statistics.classList.add('statistics');
 
   document.body.appendChild(statistics);
@@ -155,7 +155,19 @@ function main() {
   ul.appendChild(createScore(board));
   ul.appendChild(createTargetScore(board));
   ul.appendChild(createLevel(board));
-  ul.appendChild(createTimer(timer));
+  // ul.appendChild(createTimer(timer));
+
+  document.body.appendChild(createMenu(board, timer))
+//  const help = document.createElement("button");
+//  help.textContent = "?";
+//
+//  help.addEventListener("click", ()=> {
+//    alert('help')
+//  })
+// 
+//  const buttonLi = document.createElement('li');
+//  buttonLi.appendChild(help);
+//  ul.appendChild(buttonLi)
   statistics.appendChild(ul);
 
   timer.subscribe('time', (value) => {
@@ -181,8 +193,8 @@ function main() {
   board.generate();
   console.table(board.toMatrix());
 
-  // container.style.opacity = '1';
-  // ul.style.opacity = '1';
+  container.style.opacity = '1';
+  ul.style.opacity = '1';
 
   // expose board to window to perform debugging in browser
   (window as any).board = board;
@@ -203,4 +215,4 @@ setTimeout(() => {
   setTimeout(() => {
     loader.style.display = 'none';
   }, 1000);
-}, 400);
+}, 200);

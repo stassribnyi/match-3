@@ -1,6 +1,7 @@
 import { Model } from './model';
 
 interface ITimer {
+  get isRunning(): boolean;
   time: number;
   add: (seconds: number) => void;
   stop: () => void;
@@ -12,6 +13,10 @@ export class Timer extends Model<ITimer> implements ITimer {
   private interval?: number | null;
 
   public time: number;
+
+  public get isRunning(): boolean {
+    return !!this.interval;
+  }
 
   constructor(private seconds: number) {
     super();
@@ -44,6 +49,8 @@ export class Timer extends Model<ITimer> implements ITimer {
 
       this.time--;
     }, 1000);
+
+    this.notify('isRunning', true);
   }
 
   public stop(): void {
@@ -53,6 +60,7 @@ export class Timer extends Model<ITimer> implements ITimer {
 
     clearInterval(this.interval);
     this.interval = null;
+    this.notify('isRunning', false);
   }
 
   public reset(): void {
