@@ -1,23 +1,27 @@
 @font-face {
-  font-family: 'Ancient Modern Tales';
-  src: url('../fonts/ancient-modern-tales.otf');
+  font-family: 'Halloween Nightmare Demo';
+  src: url('../fonts/Halloween\ Nightmare\ Demo.ttf');
 }
 
 body {
-  font-family: 'Ancient Modern Tales', sans-serif;
+  font-family: 'Halloween Nightmare Demo', serif;
 
   height: 100vh;
 
+  margin: 0;
+  background: url('../sprites/background.png') center / cover;
+}
+
+.content {
+  width: 100%;
   gap: 2rem;
   display: flex;
   align-items: center;
   justify-content: end;
   flex-direction: column;
-  position: relative;
 
-  margin: 0;
   box-sizing: border-box;
-
+  position: relative;
   padding: {
     left: 1rem;
     right: 1rem;
@@ -25,9 +29,8 @@ body {
     bottom: max(3rem, env(safe-area-inset-bottom));
   }
 
-  background: url('../sprites/background.png') center / cover;
+  height: 100%;
 }
-
 .container {
   position: relative;
   overflow: hidden;

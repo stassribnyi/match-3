@@ -9,7 +9,7 @@ export const createLevel = (board: Board): LevelElement => {
   const el = document.createElement('li') as LevelElement;
 
   const handleLevelChange = (level: number) => {
-    el.innerText = `Level:\n${level}`;
+    el.innerText = `Level: ${level}`;
   };
 
   board.subscribe('level', handleLevelChange);

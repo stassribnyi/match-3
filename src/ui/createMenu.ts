@@ -15,16 +15,16 @@ export const createMenu = (board: Board, timer: Timer): MenuElement => {
 
   const pause = document.createElement('li');
   const restart = document.createElement('li');
-  const time = document.createElement('li');
+  //   const time = document.createElement('li');
   const help = document.createElement('li');
 
   pause.innerText = 'Start';
   restart.innerText = 'Restart';
-  time.innerText = secondsToTimeLeft(timer.time);
+  //   time.innerText = secondsToTimeLeft(timer.time);
   help.innerText = 'Help';
   el.appendChild(pause);
   el.appendChild(restart);
-  el.appendChild(time);
+  //   el.appendChild(time);
   el.appendChild(help);
   container.appendChild(el);
 
@@ -32,12 +32,12 @@ export const createMenu = (board: Board, timer: Timer): MenuElement => {
   const handleIsRunningChange = (isRunning: boolean) => {
     pause.innerText = isRunning ? 'Pause' : 'Start';
   };
-  const handleTimerChange = (value: number) => {
-    time.innerText = secondsToTimeLeft(value);
-  };
+  //   const handleTimerChange = (value: number) => {
+  //     time.innerText = secondsToTimeLeft(value);
+  //   };
 
   timer.subscribe('isRunning', handleIsRunningChange);
-  timer.subscribe('time', handleTimerChange);
+  //   timer.subscribe('time', handleTimerChange);
 
   const handlePause = () => {
     if (timer.isRunning) {
@@ -60,7 +60,7 @@ export const createMenu = (board: Board, timer: Timer): MenuElement => {
       pause.removeEventListener('click', handlePause);
       restart.removeEventListener('click', handleRestart);
       timer.unsubscribe('isRunning', handleIsRunningChange);
-      timer.unsubscribe('time', handleTimerChange);
+      //   timer.unsubscribe('time', handleTimerChange);
     },
   });
 };

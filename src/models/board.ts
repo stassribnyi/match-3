@@ -8,6 +8,7 @@ const FROZEN_ICONS: Array<Icon | null> = [Icon.Stone];
 interface IBoard {
   readonly height: number;
   readonly width: number;
+  totalScore: number;
   score: number;
   targetScore: number;
   level: number;
@@ -15,6 +16,7 @@ interface IBoard {
 }
 
 export class Board extends Model<IBoard> implements IBoard {
+  public totalScore = 0;
   public score = 0;
   public level = 1;
   public targetScore: number = 1000;
@@ -22,15 +24,21 @@ export class Board extends Model<IBoard> implements IBoard {
   public tiles: Array<Tile> = [];
   private currentMatches: Array<Array<Tile>> = [];
 
-  constructor(public readonly height: number = 7, public readonly width: number = 8) {
+  constructor(
+    public readonly height: number = 7,
+    public readonly width: number = 8
+  ) {
     super();
   }
 
-  generate(): void {
+  generate(isLevelUp = false): void {
     this.tiles = [];
     this.currentMatches = [];
     this.score = 0;
-    this.level = 1;
+    if (!isLevelUp) {
+      this.level = 1;
+      this.totalScore = 0;
+    }
 
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
@@ -155,7 +163,9 @@ export class Board extends Model<IBoard> implements IBoard {
         return;
       }
 
-      this.score += 100 * multiplier;
+      const score = 100 * multiplier;
+      this.score += score;
+      this.totalScore += score;
     });
   }
 
@@ -195,7 +205,7 @@ export class Board extends Model<IBoard> implements IBoard {
     ];
 
     // do not add any frozen item if its ration is higher then 5
-    if (frozenRation >= 5) {
+    if (frozenRation >= 3) {
       possibleIcons = possibleIcons.filter(
         (icon) => !FROZEN_ICONS.includes(icon)
       );

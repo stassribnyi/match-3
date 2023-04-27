@@ -9,7 +9,7 @@ export const createTargetScore = (board: Board): TargetScoreElement => {
   const el = document.createElement('li') as TargetScoreElement;
 
   const handleTargetScoreChange = (target: number) => {
-    el.innerText = `Level Target:\n${target} pt`;
+    el.innerText = `Target: ${target} pt`;
   };
 
   board.subscribe('targetScore', handleTargetScoreChange);

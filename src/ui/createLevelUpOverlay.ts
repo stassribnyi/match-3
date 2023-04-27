@@ -10,7 +10,7 @@ export const createLevelUpOverlay = (): LevelUpOverlayElement => {
   const show = () => {
     el.innerText = `Level Up!`;
     el.animate([{ opacity: 1 }, { transform: 'scale(1.5)' }, { opacity: 0 }], {
-      duration: 500,
+      duration: 800,
       direction: 'normal',
       easing: 'ease-in-out',
       fill: 'forwards',

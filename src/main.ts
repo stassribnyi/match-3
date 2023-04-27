@@ -13,7 +13,10 @@ import {
   TileElement,
   TileElementHandlers,
 } from './ui';
+import { createCookingOverlay } from './ui/createCookingOverlay';
+import { createGoals } from './ui/createGoals';
 import { createMenu } from './ui/createMenu';
+import { createTotalScore } from './ui/createTotalScore';
 
 import { delay, loadAudio, setCSSVar } from './utils';
 
@@ -42,14 +45,18 @@ function main() {
   const board = new Board(7, 8);
   const timer = new Timer(30);
 
+  const content = document.createElement('div');
   const container = document.createElement('div');
   const statistics = document.createElement('div');
- container.classList.add('container');
+  content.classList.add('content');
+  container.classList.add('container');
   statistics.classList.add('statistics');
 
-  document.body.appendChild(statistics);
-  document.body.appendChild(container);
+  content.appendChild(statistics);
+  content.appendChild(container);
+  document.body.appendChild(content);
 
+  const cookingOverlay = createCookingOverlay();
   const multiplierOverlay = createMultiplierOverlay();
   const levelUpOverlay = createLevelUpOverlay();
   const gameOverOverlay = createGameOverOverlay({
@@ -60,6 +67,7 @@ function main() {
     },
   });
 
+  (window as any).cookingOverlay = cookingOverlay;
   setCSSVar('--board-rows', `${board.height}`);
   setCSSVar('--board-columns', `${board.width}`);
 
@@ -85,11 +93,16 @@ function main() {
 
         if (board.score >= board.targetScore) {
           board.level += 1;
-          board.score = 0;
           timer.reset();
-          timer.start();
+          timer.stop();
           levelUpOverlay.show();
           // TODO: play level up sound
+          await delay(400);
+          cookingOverlay.show();
+          await delay(900);
+          board.generate(true);
+          await delay(900);
+          continue;
         } else {
           timer.add(5);
           multiplierOverlay.show(multiplier);
@@ -145,6 +158,7 @@ function main() {
   container.appendChild(createGrid(board.width, board.height));
 
   // TODO: draw field
+  container.appendChild(cookingOverlay);
   container.appendChild(multiplierOverlay);
   container.appendChild(levelUpOverlay);
   container.appendChild(gameOverOverlay);
@@ -152,22 +166,22 @@ function main() {
   // TODO: reuse statistic item creation logic
   // create statistics
   const ul = document.createElement('ul');
-  ul.appendChild(createScore(board));
-  ul.appendChild(createTargetScore(board));
+  ul.appendChild(createTotalScore(board));
   ul.appendChild(createLevel(board));
   // ul.appendChild(createTimer(timer));
 
-  document.body.appendChild(createMenu(board, timer))
-//  const help = document.createElement("button");
-//  help.textContent = "?";
-//
-//  help.addEventListener("click", ()=> {
-//    alert('help')
-//  })
-// 
-//  const buttonLi = document.createElement('li');
-//  buttonLi.appendChild(help);
-//  ul.appendChild(buttonLi)
+  content.appendChild(createMenu(board, timer));
+  content.appendChild(createGoals(board, timer));
+  //  const help = document.createElement("button");
+  //  help.textContent = "?";
+  //
+  //  help.addEventListener("click", ()=> {
+  //    alert('help')
+  //  })
+  //
+  //  const buttonLi = document.createElement('li');
+  //  buttonLi.appendChild(help);
+  //  ul.appendChild(buttonLi)
   statistics.appendChild(ul);
 
   timer.subscribe('time', (value) => {
