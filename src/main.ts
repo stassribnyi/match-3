@@ -229,4 +229,4 @@ setTimeout(() => {
   setTimeout(() => {
     loader.style.display = 'none';
   }, 1000);
-}, 200);
+}, 4200);
